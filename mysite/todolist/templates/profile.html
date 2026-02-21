@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+{% block title %}Profilis · todo.{% endblock %}
+
+{% load static %}
+
+
+{% block content %}
+
+<!-- ── Profile hero ── -->
+<div class="profile-hero">
+  <div class="avatar-wrap">
+    <img id="hero-avatar"
+         src="{{ user.avatar_url|default:'/static/img/avatar-placeholder.png' }}"
+         alt="{{ user.get_full_name }}"
+         class="avatar-img" />
+    <label for="id_avatar" class="avatar-edit" title="Keisti nuotrauką">
+      <i class="bi bi-camera-fill"></i>
+    </label>
+  </div>
+
+  <div class="profile-hero-info">
+    <h2>{{ user.get_full_name|default:user.username }}</h2>
+    <div class="username-tag">@{{ user.username }} · {{ user.email }}</div>
+    <div class="profile-hero-stats">
+      <div class="profile-stat">
+        <div class="num">{{ stats.total }}</div>
+        <div class="lbl">Iš viso</div>
+      </div>
+      <div class="profile-stat">
+        <div class="num">{{ stats.completed }}</div>
+        <div class="lbl">Atlikta</div>
+      </div>
+      <div class="profile-stat">
+        <div class="num">{{ stats.streak }}</div>
+        <div class="lbl">Dienų serija</div>
+      </div>
+      <div class="profile-stat">
+        <div class="num">{{ stats.completion_rate }}%</div>
+        <div class="lbl">Efektyvumas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completion ring -->
+  <div class="ms-auto progress-ring-wrap">
+    <svg width="72" height="72" class="progress-ring">
+      <circle class="progress-ring-track" cx="36" cy="36" r="30" stroke-width="5"/>
+      <circle class="progress-ring-fill" cx="36" cy="36" r="30" stroke-width="5"
+              stroke-dasharray="188.5"
+              stroke-dashoffset="{{ stats.ring_offset|default:'188' }}"
+              id="ring-fill"/>
+    </svg>
+    <span style="font-size:.75rem;color:var(--text-muted)">Progresas</span>
+  </div>
+</div>
+
+<!-- ── Tabs ── -->
+<div class="profile-tabs">
+  <a href="?tab=info"     class="profile-tab {% if active_tab == 'info' or not active_tab %}active{% endif %}">
+    <i class="bi bi-person"></i>Informacija
+  </a>
+  <a href="?tab=security" class="profile-tab {% if active_tab == 'security' %}active{% endif %}">
+    <i class="bi bi-shield-lock"></i>Saugumas
+  </a>
+  <a href="?tab=prefs"    class="profile-tab {% if active_tab == 'prefs' %}active{% endif %}">
+    <i class="bi bi-sliders"></i>Nustatymai
+  </a>
+  <a href="?tab=danger"   class="profile-tab {% if active_tab == 'danger' %}active{% endif %}"
+     style="{% if active_tab == 'danger' %}color:var(--danger-soft){% endif %}">
+    <i class="bi bi-exclamation-triangle"></i>Paskyra
+  </a>
+</div>
+
+<!-- Flash -->
+{% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mb-3">
+      {{ msg }}
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<!-- ════════════════════════════════
+     TAB: INFO
+     ════════════════════════════════ -->
+{% if active_tab == 'info' or not active_tab %}
+<form method="post" action="{% url 'profile_update' %}" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="tab" value="info" />
+
+  <div class="section-card">
+    <div class="card-header">
+      <i class="bi bi-person-circle" style="color:var(--accent)"></i>
+      <h5>Asmeninė informacija</h5>
+    </div>
+    <div class="card-body">
+
+      <div class="mb-4" id="avatar-preview-wrap">
+        <img id="avatar-preview"
+             src="{{ user.avatar_url|default:'/static/img/avatar-placeholder.png' }}"
+             alt="Profilio nuotrauka" />
+        <div>
+          <label class="form-label d-block mb-1">Profilio nuotrauka</label>
+          <input type="file" name="avatar" id="id_avatar" class="form-control form-control-sm"
+                 accept="image/*" onchange="previewAvatar(this)" />
+          <small class="text-muted" style="font-size:.78rem">JPG, PNG, WebP · maks. 2 MB</small>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label" for="id_first_name">Vardas</label>
+          <input type="text" id="id_first_name" name="first_name"
+                 class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                 value="{{ form.first_name.value|default:user.first_name }}" />
+          {% if form.first_name.errors %}
+            <div class="invalid-feedback">{{ form.first_name.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="id_last_name">Pavardė</label>
+          <input type="text" id="id_last_name" name="last_name"
+                 class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                 value="{{ form.last_name.value|default:user.last_name }}" />
+          {% if form.last_name.errors %}
+            <div class="invalid-feedback">{{ form.last_name.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="id_username">Vartotojo vardas</label>
+        <div class="input-group">
+          <span class="input-group-text" style="background:var(--surface-3);border-color:var(--border);color:var(--text-muted)">@</span>
+          <input type="text" id="id_username" name="username"
+                 class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                 value="{{ form.username.value|default:user.username }}" />
+          {% if form.username.errors %}
+            <div class="invalid-feedback">{{ form.username.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="id_email">El. paštas</label>
+        <input type="email" id="id_email" name="email"
+               class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+               value="{{ form.email.value|default:user.email }}" />
+        {% if form.email.errors %}
+          <div class="invalid-feedback">{{ form.email.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-0">
+        <label class="form-label" for="id_bio">Trumpas aprašymas</label>
+        <textarea id="id_bio" name="bio" class="form-control" rows="3"
+                  placeholder="Keletas žodžių apie save…">{{ form.bio.value|default:user.bio|default:'' }}</textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-accent px-4 py-2">
+    <i class="bi bi-floppy me-1"></i>Išsaugoti
+  </button>
+</form>
+
+<!-- ════════════════════════════════
+     TAB: SECURITY
+     ════════════════════════════════ -->
+{% elif active_tab == 'security' %}
+<form method="post" action="{% url 'profile_update' %}" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="tab" value="security" />
+
+  <div class="section-card mb-3">
+    <div class="card-header">
+      <i class="bi bi-key-fill" style="color:var(--accent)"></i>
+      <h5>Slaptažodžio keitimas</h5>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label" for="id_old_password">Dabartinis slaptažodis</label>
+        <input type="password" id="id_old_password" name="old_password"
+               class="form-control {% if pw_form.old_password.errors %}is-invalid{% endif %}"
+               autocomplete="current-password" />
+        {% if pw_form.old_password.errors %}
+          <div class="invalid-feedback">{{ pw_form.old_password.errors.0 }}</div>
+        {% endif %}
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="id_new_password1">Naujas slaptažodis</label>
+          <input type="password" id="id_new_password1" name="new_password1"
+                 class="form-control {% if pw_form.new_password1.errors %}is-invalid{% endif %}"
+                 autocomplete="new-password" />
+          {% if pw_form.new_password1.errors %}
+            <div class="invalid-feedback">{{ pw_form.new_password1.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="id_new_password2">Pakartokite</label>
+          <input type="password" id="id_new_password2" name="new_password2"
+                 class="form-control {% if pw_form.new_password2.errors %}is-invalid{% endif %}"
+                 autocomplete="new-password" />
+          {% if pw_form.new_password2.errors %}
+            <div class="invalid-feedback">{{ pw_form.new_password2.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card mb-3">
+    <div class="card-header">
+      <i class="bi bi-shield-check" style="color:var(--accent)"></i>
+      <h5>Dviejų žingsnių autentifikacija (2FA)</h5>
+    </div>
+    <div class="card-body d-flex align-items-center justify-content-between gap-3">
+      <div>
+        <div class="fw-500">TOTP autentifikatorius</div>
+        <small class="text-muted">Naudok Google Authenticator arba panašią programą.</small>
+      </div>
+      {% if user.totp_enabled %}
+        <a href="{% url 'disable_2fa' %}" class="btn btn-ghost btn-sm px-3">
+          <i class="bi bi-shield-x me-1"></i>Išjungti
+        </a>
+      {% else %}
+        <a href="{% url 'setup_2fa' %}" class="btn btn-accent btn-sm px-3">
+          <i class="bi bi-shield-plus me-1"></i>Įjungti
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-accent px-4 py-2">
+    <i class="bi bi-floppy me-1"></i>Atnaujinti slaptažodį
+  </button>
+</form>
+
+<!-- ════════════════════════════════
+     TAB: PREFERENCES
+     ════════════════════════════════ -->
+{% elif active_tab == 'prefs' %}
+<form method="post" action="{% url 'profile_update' %}" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="tab" value="prefs" />
+
+  <div class="section-card mb-3">
+    <div class="card-header">
+      <i class="bi bi-palette" style="color:var(--accent)"></i>
+      <h5>Išvaizda</h5>
+    </div>
+    <div class="card-body">
+      <label class="form-label">Tema</label>
+      <div class="theme-options mb-3">
+        <div class="theme-opt {% if user.prefs.theme == 'dark' or not user.prefs.theme %}selected{% endif %}"
+             onclick="selectTheme('dark', this)">
+          <span class="icon">🌙</span>Tamsi
+          <input type="radio" name="theme" value="dark" class="d-none"
+                 {% if user.prefs.theme == 'dark' or not user.prefs.theme %}checked{% endif %} />
+        </div>
+        <div class="theme-opt {% if user.prefs.theme == 'light' %}selected{% endif %}"
+             onclick="selectTheme('light', this)">
+          <span class="icon">☀️</span>Šviesi
+          <input type="radio" name="theme" value="light" class="d-none"
+                 {% if user.prefs.theme == 'light' %}checked{% endif %} />
+        </div>
+        <div class="theme-opt {% if user.prefs.theme == 'system' %}selected{% endif %}"
+             onclick="selectTheme('system', this)">
+          <span class="icon">💻</span>Sistemos
+          <input type="radio" name="theme" value="system" class="d-none"
+                 {% if user.prefs.theme == 'system' %}checked{% endif %} />
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="id_language">Kalba</label>
+          <select id="id_language" name="language" class="form-select">
+            <option value="lt" {% if user.prefs.language == 'lt' %}selected{% endif %}>🇱🇹 Lietuvių</option>
+            <option value="en" {% if user.prefs.language == 'en' %}selected{% endif %}>🇬🇧 English</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="id_timezone">Laiko juosta</label>
+          <select id="id_timezone" name="timezone" class="form-select">
+            <option value="Europe/Vilnius" {% if user.prefs.timezone == 'Europe/Vilnius' %}selected{% endif %}>
+              Europe/Vilnius (UTC+2/+3)
+            </option>
+            <option value="UTC" {% if user.prefs.timezone == 'UTC' %}selected{% endif %}>UTC</option>
+            {# Add more zones as needed #}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card mb-3">
+    <div class="card-header">
+      <i class="bi bi-bell" style="color:var(--accent)"></i>
+      <h5>Pranešimai</h5>
+    </div>
+    <div class="card-body d-flex flex-column gap-3">
+      {% for pref_key, pref_label in notification_prefs %}
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="fw-500 mb-0" style="font-size:.9rem">{{ pref_label }}</div>
+        </div>
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox"
+                 name="{{ pref_key }}" id="pref_{{ pref_key }}"
+                 style="width:2.5rem;height:1.25rem;cursor:pointer;accent-color:var(--accent)"
+                 {% if user.prefs|getattr:pref_key %}checked{% endif %} />
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-accent px-4 py-2">
+    <i class="bi bi-floppy me-1"></i>Išsaugoti nustatymus
+  </button>
+</form>
+
+<!-- ════════════════════════════════
+     TAB: DANGER ZONE
+     ════════════════════════════════ -->
+{% elif active_tab == 'danger' %}
+<div class="section-card mb-3">
+  <div class="card-header">
+    <i class="bi bi-box-arrow-right" style="color:var(--warning-soft)"></i>
+    <h5>Atsijungimas iš visų įrenginių</h5>
+  </div>
+  <div class="card-body d-flex justify-content-between align-items-center gap-3">
+    <small class="text-muted">Atsijungsi iš visų naršyklių ir programų.</small>
+    <form method="post" action="{% url 'logout_all' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-ghost px-4">
+        <i class="bi bi-box-arrow-right me-1"></i>Atsijungti visur
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="danger-zone">
+  <h5 style="color:var(--danger-soft);font-family:'Syne',sans-serif">
+    <i class="bi bi-exclamation-triangle me-2"></i>Pavojaus zona
+  </h5>
+  <p class="text-muted mb-3" style="font-size:.88rem">
+    Paskyros ištrynimas yra negrįžtamas. Visi duomenys, užduotys ir nustatymai bus prarasti.
+  </p>
+  <button type="button" class="btn px-4"
+          style="background:rgba(255,77,109,.12);color:var(--danger-soft);border:1px solid rgba(255,77,109,.3)"
+          data-bs-toggle="modal" data-bs-target="#deleteModal">
+    <i class="bi bi-trash3 me-1"></i>Ištrinti paskyrą
+  </button>
+</div>
+
+<!-- Delete confirm modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:var(--surface-2);border:1px solid var(--border)">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title" style="font-family:'Syne',sans-serif;color:var(--danger-soft)">
+          <i class="bi bi-exclamation-triangle me-2"></i>Ištrinti paskyrą?
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="font-size:.9rem">
+          Šis veiksmas yra <strong class="text-white">negrįžtamas</strong>.
+          Įvesk savo slaptažodį patvirtinimui.
+        </p>
+        <form method="post" action="{% url 'profile_delete' %}" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <input type="password" name="confirm_password" class="form-control"
+                   placeholder="Slaptažodis" autocomplete="current-password" required />
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn px-4"
+                    style="background:var(--danger-soft);color:#fff;border:none;border-radius:9px;font-weight:700">
+              Ištrinti visam laikui
+            </button>
+            <button type="button" class="btn btn-ghost px-4" data-bs-dismiss="modal">Atšaukti</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+/* ── Avatar preview ── */
+function previewAvatar(input) {
+  if (!input.files || !input.files[0]) return;
+  const url = URL.createObjectURL(input.files[0]);
+  document.getElementById('avatar-preview').src = url;
+  document.getElementById('hero-avatar').src = url;
+}
+
+/* ── Theme selector ── */
+function selectTheme(val, el) {
+  document.querySelectorAll('.theme-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input[type=radio]').checked = true;
+}
+
+/* ── Animate progress ring on load ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const fill = document.getElementById('ring-fill');
+  if (!fill) return;
+  const target = fill.getAttribute('stroke-dashoffset');
+  fill.style.strokeDashoffset = '188.5';
+  requestAnimationFrame(() => {
+    setTimeout(() => { fill.style.strokeDashoffset = target; }, 50);
+  });
+});
+</script>
+{% endblock %}

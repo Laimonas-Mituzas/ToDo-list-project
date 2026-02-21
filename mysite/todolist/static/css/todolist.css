@@ -1,0 +1,1100 @@
+/* ==========================================================================
+   todolist. — pagrindinis stilių failas
+   Bootstrap 5 + Google Fonts: Syne, DM Sans
+   Naudojimas: <link rel="stylesheet" href="{% static 'css/todolist.css' %}" />
+   ========================================================================== */
+
+
+/* ═══════════════════════════════════════════════════════════════
+   1. CSS KINTAMIEJI
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --accent:       #00e5a0;
+  --accent-dim:   #00b87a;
+  --surface:      #0f1117;
+  --surface-2:    #181c27;
+  --surface-3:    #222636;
+  --border:       rgba(255, 255, 255, 0.07);
+  --text-muted:   #7b8099;
+  --danger-soft:  #ff4d6d;
+  --warning-soft: #ffbe0b;
+  --radius:       14px;
+  --transition:   .2s cubic-bezier(.4, 0, .2, 1);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   2. BAZINIAI STILIAI
+   ═══════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--surface);
+  color: #e4e8f0;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: 'Syne', sans-serif;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-dim); }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   3. NAVBAR
+   ═══════════════════════════════════════════════════════════════ */
+
+.navbar {
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  padding: .9rem 0;
+}
+
+.navbar-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--accent) !important;
+  letter-spacing: -.5px;
+}
+
+.navbar-brand span { color: #e4e8f0; }
+
+.nav-link {
+  color: var(--text-muted) !important;
+  font-weight: 500;
+  font-size: .9rem;
+  letter-spacing: .3px;
+  transition: color var(--transition);
+  padding: .4rem .85rem !important;
+  border-radius: 8px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #e4e8f0 !important;
+  background: var(--surface-3);
+}
+
+.nav-link.active { color: var(--accent) !important; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   4. PAGRINDINIS IŠDĖSTYMAS (App wrapper + Sidebar)
+   ═══════════════════════════════════════════════════════════════ */
+
+.app-wrapper {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 62px);
+}
+
+.sidebar {
+  background: var(--surface-2);
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 1rem;
+  position: sticky;
+  top: 62px;
+  height: calc(100vh - 62px);
+  overflow-y: auto;
+}
+
+.sidebar-section-title {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  padding: 0 .5rem;
+  margin: 1.25rem 0 .5rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .55rem .75rem;
+  border-radius: 9px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: .9rem;
+  font-weight: 500;
+  transition: all var(--transition);
+}
+
+.sidebar-link:hover { color: #e4e8f0; background: var(--surface-3); }
+.sidebar-link.active { color: var(--accent); background: rgba(0, 229, 160, .08); }
+.sidebar-link .bi { font-size: 1rem; }
+
+.sidebar-badge {
+  margin-left: auto;
+  font-size: .7rem;
+  padding: .15rem .5rem;
+  border-radius: 20px;
+  background: var(--surface-3);
+  color: var(--text-muted);
+}
+
+.sidebar-link.active .sidebar-badge {
+  background: rgba(0, 229, 160, .15);
+  color: var(--accent);
+}
+
+.main-content {
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .app-wrapper { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main-content { padding: 1.25rem; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   5. KORTELĖS (Cards)
+   ═══════════════════════════════════════════════════════════════ */
+
+.card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+  padding: 1.1rem 1.4rem;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   6. MYGTUKAI (Buttons)
+   ═══════════════════════════════════════════════════════════════ */
+
+.btn-accent {
+  background: var(--accent);
+  color: #0f1117;
+  font-weight: 700;
+  border: none;
+  border-radius: 9px;
+  transition: all var(--transition);
+}
+
+.btn-accent:hover {
+  background: var(--accent-dim);
+  color: #0f1117;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 9px;
+  transition: all var(--transition);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-3);
+  color: #e4e8f0;
+  border-color: rgba(255, 255, 255, .15);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   7. FORMOS (Forms)
+   ═══════════════════════════════════════════════════════════════ */
+
+.form-control,
+.form-select {
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  color: #e4e8f0;
+  border-radius: 9px;
+  padding: .6rem 1rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--surface-3);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 229, 160, .12);
+  color: #e4e8f0;
+}
+
+.form-control::placeholder { color: var(--text-muted); }
+
+.form-label {
+  font-size: .85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: .4rem;
+}
+
+.invalid-feedback { font-size: .8rem; }
+
+.input-group-text {
+  background: var(--surface-3);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* Ikonos ant input laukų */
+.input-icon-wrap { position: relative; }
+
+.input-icon-wrap .bi {
+  position: absolute;
+  left: .9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: .95rem;
+}
+
+.input-icon-wrap .form-control { padding-left: 2.4rem; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   8. PRANEŠIMAI (Alerts)
+   ═══════════════════════════════════════════════════════════════ */
+
+.alert {
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: .9rem;
+}
+
+.alert-success {
+  background: rgba(0, 229, 160, .08);
+  border-color: rgba(0, 229, 160, .2);
+  color: var(--accent);
+}
+
+.alert-danger {
+  background: rgba(255, 77, 109, .08);
+  border-color: rgba(255, 77, 109, .2);
+  color: var(--danger-soft);
+}
+
+.alert-warning {
+  background: rgba(255, 190, 11, .08);
+  border-color: rgba(255, 190, 11, .2);
+  color: var(--warning-soft);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   9. PUSLAPIAVIMAS (Pagination)
+   ═══════════════════════════════════════════════════════════════ */
+
+.page-link {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text-muted);
+  border-radius: 8px !important;
+}
+
+.page-link:hover {
+  background: var(--surface-3);
+  color: #e4e8f0;
+  border-color: var(--border);
+}
+
+.page-item.active .page-link {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0f1117;
+}
+
+.page-item.disabled .page-link {
+  background: var(--surface-2);
+  opacity: .4;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   10. AUTH PUSLAPIS (auth.html)
+   ═══════════════════════════════════════════════════════════════ */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 10%, rgba(0, 229, 160, .06) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 90%, rgba(0, 229, 160, .04) 0%, transparent 70%),
+    var(--surface);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  color: var(--accent);
+  letter-spacing: -1px;
+}
+
+.auth-logo span { color: #e4e8f0; }
+
+.text-muted-custom {
+  color: var(--text-muted) !important;
+  font-size: .82rem;
+}
+
+.tab-switcher {
+  display: flex;
+  gap: 4px;
+  background: var(--surface-3);
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 1.75rem;
+}
+
+.tab-switcher a {
+  flex: 1;
+  text-align: center;
+  padding: .5rem;
+  border-radius: 7px;
+  font-size: .875rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.tab-switcher a.active {
+  background: var(--surface-2);
+  color: var(--accent);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .3);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-muted);
+  font-size: .8rem;
+  margin: 1.25rem 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Slaptažodžio stiprumo indikatorius */
+.strength-bar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--surface-3);
+  margin-top: .35rem;
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .4s ease, background .3s;
+  width: 0;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   11. SKYDELIS — ANTRAŠTĖ IR STATISTIKA (dashboard.html)
+   ═══════════════════════════════════════════════════════════════ */
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.stat-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  transition: border-color var(--transition);
+}
+
+.stat-card:hover { border-color: rgba(255, 255, 255, .14); }
+
+.stat-card .stat-num {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.stat-card .stat-label {
+  font-size: .8rem;
+  color: var(--text-muted);
+}
+
+/* Įrankių juosta */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-wrap .bi {
+  position: absolute;
+  left: .9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-wrap .form-control { padding-left: 2.4rem; }
+
+/* Greitas kūrimas */
+.quick-add {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.quick-add form {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.quick-add .form-control {
+  flex: 1;
+  min-width: 180px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   12. TODOLIST SĄRAŠAS (dashboard.html)
+   ═══════════════════════════════════════════════════════════════ */
+
+.todo-list { display: flex; flex-direction: column; gap: .6rem; }
+
+.todo-item {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: border-color var(--transition), background var(--transition);
+  cursor: pointer;
+}
+
+.todo-item:hover {
+  border-color: rgba(255, 255, 255, .12);
+  background: var(--surface-3);
+}
+
+.todo-item.done { opacity: .55; }
+
+/* Checkbox apskritimas */
+.todo-check {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.todo-check.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.todo-check.checked::after {
+  content: '\F26D';
+  font-family: 'bootstrap-icons';
+  font-size: .65rem;
+  color: #0f1117;
+  font-style: normal;
+}
+
+.todo-body { flex: 1; min-width: 0; }
+
+.todo-title {
+  font-weight: 500;
+  font-size: .95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.todo-item.done .todo-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.todo-meta {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  flex-wrap: wrap;
+  margin-top: .3rem;
+}
+
+.todo-meta .badge {
+  font-size: .7rem;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: .2rem .55rem;
+}
+
+/* Prioriteto ženkleliai */
+.priority-high   { background: rgba(255, 77, 109, .15); color: #ff4d6d; }
+.priority-medium { background: rgba(255, 190, 11, .15); color: #ffbe0b; }
+.priority-low    { background: rgba(0, 229, 160, .15);  color: #00e5a0; }
+
+.todo-date {
+  font-size: .78rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+}
+
+.todo-date.overdue { color: var(--danger-soft); }
+
+/* Hover veiksmai */
+.todo-actions {
+  display: flex;
+  gap: .4rem;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.todo-item:hover .todo-actions { opacity: 1; }
+
+.todo-action-btn {
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-decoration: none;
+}
+
+.todo-action-btn:hover {
+  color: #e4e8f0;
+  border-color: rgba(255, 255, 255, .15);
+}
+
+.todo-action-btn.danger:hover {
+  color: var(--danger-soft);
+  border-color: var(--danger-soft);
+}
+
+/* Tuščia būsena */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+}
+
+.empty-state .bi {
+  font-size: 3rem;
+  color: var(--surface-3);
+  margin-bottom: 1rem;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   13. TODOLIST DETALĖS / REDAGAVIMAS (todo_detail.html)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Breadcrumb */
+.breadcrumb-item a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: .85rem;
+}
+
+.breadcrumb-item a:hover { color: var(--accent); }
+.breadcrumb-item.active { color: var(--text-muted); font-size: .85rem; }
+.breadcrumb-item + .breadcrumb-item::before { color: var(--text-muted); }
+
+/* Dviejų stulpelių išdėstymas */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .detail-grid { grid-template-columns: 1fr; }
+}
+
+/* Pavadinimo laukas */
+.title-input {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--border);
+  border-radius: 0;
+  padding: .5rem 0;
+  color: #e4e8f0;
+  width: 100%;
+  transition: border-color var(--transition);
+}
+
+.title-input:focus {
+  background: transparent;
+  border-color: var(--accent);
+  box-shadow: none;
+  outline: none;
+}
+
+/* Aprašymo textarea */
+.desc-area {
+  min-height: 180px;
+  resize: vertical;
+  font-size: .93rem;
+  line-height: 1.7;
+}
+
+/* Metaduomenų kortelė */
+.meta-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .85rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  gap: .75rem;
+}
+
+.meta-row:last-child { border-bottom: none; }
+
+.meta-label {
+  font-size: .8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.meta-value { font-size: .88rem; font-weight: 500; }
+
+/* Prioriteto mygtukai */
+.priority-select-group { display: flex; gap: .4rem; }
+
+.priority-btn {
+  padding: .3rem .7rem;
+  border-radius: 7px;
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all var(--transition);
+  background: var(--surface-3);
+  color: var(--text-muted);
+}
+
+.priority-btn.active-high   { background: rgba(255, 77, 109, .2);  color: #ff4d6d; border-color: rgba(255, 77, 109, .4); }
+.priority-btn.active-medium { background: rgba(255, 190, 11, .2);  color: #ffbe0b; border-color: rgba(255, 190, 11, .4); }
+.priority-btn.active-low    { background: rgba(0, 229, 160, .2);   color: #00e5a0; border-color: rgba(0, 229, 160, .4); }
+
+/* Etiketės */
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-bottom: .5rem;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .2rem .55rem;
+  border-radius: 6px;
+  font-size: .75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tag-chip .remove { font-size: .7rem; opacity: .7; }
+
+/* Kontrolinis sąrašas */
+.checklist { display: flex; flex-direction: column; gap: .45rem; }
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  background: var(--surface-3);
+  border-radius: 8px;
+  padding: .55rem .75rem;
+}
+
+.checklist-item input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checklist-item input[type="text"] {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e4e8f0;
+  font-size: .88rem;
+  outline: none;
+}
+
+.checklist-item .del-sub {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: .8rem;
+  padding: 0;
+  transition: color var(--transition);
+}
+
+.checklist-item .del-sub:hover { color: var(--danger-soft); }
+
+/* Veiksmų istorija */
+.activity-item {
+  display: flex;
+  gap: .75rem;
+  padding: .6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: .84rem;
+}
+
+.activity-item:last-child { border-bottom: none; }
+
+.activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: .3rem;
+  flex-shrink: 0;
+}
+
+/* Veiksmų juosta apačioje */
+.action-bar {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 1.1rem 0 0;
+  border-top: 1px solid var(--border);
+  margin-top: 1.5rem;
+}
+
+/* Būsenos ženkliukas */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .3rem .85rem;
+  border-radius: 20px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.status-pill.pending   { background: rgba(255, 190, 11, .12); color: #ffbe0b; }
+.status-pill.completed { background: rgba(0, 229, 160, .12);  color: #00e5a0; }
+.status-pill.overdue   { background: rgba(255, 77, 109, .12); color: #ff4d6d; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   14. PROFILIO PUSLAPIS (profile.html)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Profilio antraštė */
+.profile-hero {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 100% at 90% 50%, rgba(0, 229, 160, .05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.avatar-wrap { position: relative; flex-shrink: 0; }
+
+.avatar-img {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--accent);
+}
+
+.avatar-edit {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 26px;
+  height: 26px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: .7rem;
+  color: #0f1117;
+  border: 2px solid var(--surface-2);
+  transition: transform var(--transition);
+}
+
+.avatar-edit:hover { transform: scale(1.1); }
+
+.profile-hero-info h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 .25rem;
+}
+
+.profile-hero-info .username-tag {
+  color: var(--text-muted);
+  font-size: .88rem;
+  margin-bottom: .6rem;
+}
+
+.profile-hero-stats {
+  display: flex;
+  gap: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.profile-stat { text-align: center; }
+
+.profile-stat .num {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--accent);
+}
+
+.profile-stat .lbl {
+  font-size: .75rem;
+  color: var(--text-muted);
+}
+
+/* Profilio skirtukų juosta */
+.profile-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.profile-tab {
+  flex: 1;
+  text-align: center;
+  padding: .55rem;
+  border-radius: 8px;
+  font-size: .875rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+}
+
+.profile-tab:hover { color: #e4e8f0; background: var(--surface-3); }
+
+.profile-tab.active {
+  color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .3);
+}
+
+/* Sekcijų kortelės */
+.section-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.section-card .card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.section-card .card-header h5 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.section-card .card-body { padding: 1.4rem; }
+
+/* Avataro peržiūra */
+#avatar-preview-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+#avatar-preview {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+}
+
+/* Temos pasirinkimas */
+.theme-options { display: flex; gap: .75rem; }
+
+.theme-opt {
+  flex: 1;
+  padding: .85rem;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  text-align: center;
+  font-size: .82rem;
+  font-weight: 600;
+  transition: all var(--transition);
+  color: var(--text-muted);
+}
+
+.theme-opt:hover { border-color: rgba(255, 255, 255, .18); }
+.theme-opt.selected { border-color: var(--accent); color: var(--accent); }
+.theme-opt .icon { font-size: 1.5rem; display: block; margin-bottom: .3rem; }
+
+/* Pavojaus zona */
+.danger-zone {
+  background: rgba(255, 77, 109, .05);
+  border: 1px solid rgba(255, 77, 109, .2);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+}
+
+/* Progreso žiedas */
+.progress-ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+}
+
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring-track { fill: none; stroke: var(--surface-3); }
+
+.progress-ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease;
+}

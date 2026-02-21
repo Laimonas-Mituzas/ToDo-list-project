@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Skydelis · todo.{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block sb_all %}active{% endblock %}
+
+{% block content %}
+
+<!-- ── Page header ── -->
+<div class="page-header">
+  <div>
+    <p class="text-muted mb-1" style="font-size:.85rem">
+      <i class="bi bi-calendar3 me-1"></i>
+      {{ today|date:"l, Y m. d. d." }}
+    </p>
+    <h1>Labas, {{ user.first_name|default:user.username }} 👋</h1>
+  </div>
+  <a href="{% url 'todo_create' %}" class="btn btn-accent px-4">
+    <i class="bi bi-plus-lg me-1"></i>Nauja užduotis
+  </a>
+</div>
+
+<!-- ── Stats row ── -->
+<div class="stat-cards">
+  <div class="stat-card">
+    <span class="stat-num">{{ stats.total }}</span>
+    <span class="stat-label">Iš viso</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num" style="color:var(--accent)">{{ stats.completed }}</span>
+    <span class="stat-label">Atlikta</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num" style="color:var(--warning-soft)">{{ stats.pending }}</span>
+    <span class="stat-label">Laukiama</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num" style="color:var(--danger-soft)">{{ stats.overdue }}</span>
+    <span class="stat-label">Vėluojama</span>
+  </div>
+</div>
+
+<!-- ── Quick add ── -->
+<div class="quick-add">
+  <i class="bi bi-lightning-fill" style="color:var(--accent)"></i>
+  <form method="post" action="{% url 'todo_quick_create' %}">
+    {% csrf_token %}
+    <input type="text" name="title" class="form-control"
+           placeholder="Pridėti naują užduotį… (ir paspausti Enter)"
+           autocomplete="off" />
+    <select name="priority" class="form-select" style="max-width:140px">
+      <option value="low">🟢 Žemas</option>
+      <option value="medium" selected>🟡 Vidutinis</option>
+      <option value="high">🔴 Aukštas</option>
+    </select>
+    <button type="submit" class="btn btn-accent px-3">Pridėti</button>
+  </form>
+</div>
+
+<!-- ── Toolbar ── -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <i class="bi bi-search"></i>
+    <form method="get">
+      <input type="text" name="q" class="form-control"
+             placeholder="Ieškoti užduočių…"
+             value="{{ request.GET.q|default:'' }}" />
+    </form>
+  </div>
+
+  <select class="form-select" style="max-width:150px"
+          onchange="location='?sort='+this.value+'&q={{ request.GET.q }}'">
+    <option value="created" {% if sort == 'created' %}selected{% endif %}>Naujausi</option>
+    <option value="due"     {% if sort == 'due'     %}selected{% endif %}>Terminas</option>
+    <option value="priority"{% if sort == 'priority'%}selected{% endif %}>Prioritetas</option>
+    <option value="title"   {% if sort == 'title'   %}selected{% endif %}>Pavadinimas</option>
+  </select>
+
+  <div class="btn-group" role="group">
+    <a href="?filter=all&sort={{ sort }}"
+       class="btn btn-ghost btn-sm {% if active_filter == 'all' %}text-white border-white{% endif %}">
+      Visi
+    </a>
+    <a href="?filter=active&sort={{ sort }}"
+       class="btn btn-ghost btn-sm {% if active_filter == 'active' %}text-white border-white{% endif %}">
+      Aktyvūs
+    </a>
+    <a href="?filter=done&sort={{ sort }}"
+       class="btn btn-ghost btn-sm {% if active_filter == 'done' %}text-white border-white{% endif %}">
+      Atlikti
+    </a>
+  </div>
+</div>
+
+<!-- ── Todolist list ── -->
+{% if todos %}
+  <div class="todo-list">
+    {% for todo in todos %}
+    <div class="todo-item {% if todo.is_completed %}done{% endif %}">
+
+      <!-- Checkbox (toggle via POST) -->
+      <form method="post" action="{% url 'todo_toggle' todo.pk %}" style="margin:0">
+        {% csrf_token %}
+        <button type="submit" class="todo-check {% if todo.is_completed %}checked{% endif %}"
+                title="{% if todo.is_completed %}Atžymėti{% else %}Pažymėti kaip atliktą{% endif %}">
+        </button>
+      </form>
+
+      <!-- Body (click → detail) -->
+      <a href="{% url 'todo_detail' todo.pk %}" class="todo-body text-decoration-none text-reset">
+        <div class="todo-title">{{ todo.title }}</div>
+        <div class="todo-meta">
+          <span class="badge priority-{{ todo.priority }}">
+            {{ todo.get_priority_display }}
+          </span>
+          {% if todo.due_date %}
+            <span class="todo-date {% if todo.is_overdue %}overdue{% endif %}">
+              <i class="bi bi-calendar-event"></i>
+              {{ todo.due_date|date:"m-d" }}
+              {% if todo.is_overdue %}<i class="bi bi-exclamation-circle ms-1"></i>{% endif %}
+            </span>
+          {% endif %}
+          {% for tag in todo.tags.all %}
+            <span class="badge" style="background:{{ tag.color }}22;color:{{ tag.color }}">
+              {{ tag.name }}
+            </span>
+          {% endfor %}
+        </div>
+      </a>
+
+      <!-- Actions -->
+      <div class="todo-actions">
+        <a href="{% url 'todo_edit' todo.pk %}" class="todo-action-btn" title="Redaguoti">
+          <i class="bi bi-pencil"></i>
+        </a>
+        <form method="post" action="{% url 'todo_delete' todo.pk %}"
+              onsubmit="return confirm('Ištrinti šią užduotį?')">
+          {% csrf_token %}
+          <button type="submit" class="todo-action-btn danger" title="Ištrinti">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <nav class="mt-4 d-flex justify-content-center">
+    <ul class="pagination gap-1">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&sort={{ sort }}&filter={{ active_filter }}">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ num }}&q={{ request.GET.q }}&sort={{ sort }}&filter={{ active_filter }}">{{ num }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&sort={{ sort }}&filter={{ active_filter }}">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
+{% else %}
+  <!-- Empty state -->
+  <div class="empty-state">
+    <div><i class="bi bi-check2-all d-block"></i></div>
+    <h5 class="font-display">Nėra užduočių</h5>
+    <p style="font-size:.88rem">
+      {% if request.GET.q %}
+        Nerasta užduočių pagal „{{ request.GET.q }}"
+      {% else %}
+        Pradėk nuo naujos užduoties pridėjimo!
+      {% endif %}
+    </p>
+    {% if not request.GET.q %}
+      <a href="{% url 'todo_create' %}" class="btn btn-accent px-4 mt-2">
+        <i class="bi bi-plus-lg me-1"></i>Pridėti pirmą užduotį
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="lt" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}TodoApp{% endblock %}</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <!-- Todolist stiliai -->
+  {% load static %}
+  <link href="{% static 'css/todolist.css' %}" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ── Navbar ── -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand" href="">todo<span>.</span></a>
+
+      <button class="navbar-toggler border-0 shadow-none" type="button"
+              data-bs-toggle="collapse" data-bs-target="#navbarMain">
+        <i class="bi bi-list text-white fs-4"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav ms-auto align-items-center gap-1">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link {% block nav_dashboard %}{% endblock %}" href="">
+                <i class="bi bi-grid me-1"></i>Skydelis
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="">
+                <img src="{{ user.avatar_url|default:'/static/img/avatar-placeholder.png' }}"
+                     class="rounded-circle me-1"
+                     width="22" height="22" alt="Avatar" />
+                {{ user.get_short_name }}
+              </a>
+            </li>
+            <li class="nav-item ms-2">
+              <form action="" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-ghost btn-sm px-3">
+                  <i class="bi bi-box-arrow-right me-1"></i>Atsijungti
+                </button>
+              </form>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="">Prisijungti</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-accent btn-sm px-3" href="">Registruotis</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Flash messages ── -->
+  {% if messages %}
+    <div class="position-fixed top-0 end-0 p-3" style="z-index:1090;margin-top:70px">
+      {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show shadow" role="alert">
+          {{ msg }}
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- ── Page body ── -->
+  <div class="app-wrapper">
+    <!-- Sidebar (shown only when authenticated) -->
+    {% if user.is_authenticated %}
+    <aside class="sidebar d-none d-lg-block">
+      <p class="sidebar-section-title">Rodiniai</p>
+      <a href="" class="sidebar-link {% block sb_all %}{% endblock %}">
+        <i class="bi bi-list-ul"></i> Visi
+        <span class="sidebar-badge">{{ todo_counts.all|default:'0' }}</span>
+      </a>
+      <a href="" class="sidebar-link {% block sb_today %}{% endblock %}">
+        <i class="bi bi-sun"></i> Šiandien
+        <span class="sidebar-badge">{{ todo_counts.today|default:'0' }}</span>
+      </a>
+      <a href="" class="sidebar-link {% block sb_upcoming %}{% endblock %}">
+        <i class="bi bi-calendar3"></i> Artimiausi
+        <span class="sidebar-badge">{{ todo_counts.upcoming|default:'0' }}</span>
+      </a>
+      <a href="" class="sidebar-link {% block sb_done %}{% endblock %}">
+        <i class="bi bi-check-circle"></i> Atlikti
+        <span class="sidebar-badge">{{ todo_counts.done|default:'0' }}</span>
+      </a>
+
+      <p class="sidebar-section-title">Prioritetas</p>
+      <a href="" class="sidebar-link">
+        <i class="bi bi-arrow-up-circle" style="color:var(--danger-soft)"></i> Aukštas
+      </a>
+      <a href="" class="sidebar-link">
+        <i class="bi bi-dash-circle" style="color:var(--warning-soft)"></i> Vidutinis
+      </a>
+      <a href="" class="sidebar-link">
+        <i class="bi bi-arrow-down-circle" style="color:var(--accent)"></i> Žemas
+      </a>
+
+      <p class="sidebar-section-title">Etiketės</p>
+      {% for tag in user_tags %}
+        <a href="" class="sidebar-link">
+          <i class="bi bi-tag" style="color:{{ tag.color }}"></i> {{ tag.name }}
+          <span class="sidebar-badge">{{ tag.todo_count }}</span>
+        </a>
+      {% empty %}
+        <span class="sidebar-link" style="pointer-events:none;font-style:italic;font-size:.8rem">
+          Nėra etiketių
+        </span>
+      {% endfor %}
+    </aside>
+    {% endif %}
+
+    <!-- Main content -->
+    <main class="main-content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
