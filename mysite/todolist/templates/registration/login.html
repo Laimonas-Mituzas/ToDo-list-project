@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{% if mode == 'register' %}Registracija{% else %}Prisijungimas{% endif %} · todo.{% endblock %}
+
+{% block content %}
+
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <div class="text-center mb-4">
+      <a href="/" class="auth-logo">todo<span>.</span></a>
+      <p class="text-muted-custom mt-2">Tavo užduočių tvarkyklė</p>
+    </div>
+
+    <!-- Flash messages -->
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mb-3" role="alert">
+          {{ msg }}
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="card">
+      <div class="card-body">
+
+        <!-- Tab switcher -->
+        <div class="tab-switcher">
+          <a href="{% url 'login' %}" class="{% if mode != 'register' %}active{% endif %}">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Prisijungti
+          </a>
+          <a href="#ulr-register-link" class="{% if mode == 'register' %}active{% endif %}">
+            <i class="bi bi-person-plus me-1"></i>Registruotis
+          </a>
+        </div>
+
+        <!-- ════════════════════════════════
+             LOGIN FORM
+             ════════════════════════════════ -->
+        {% if mode != 'register' %}
+        <form method="post" action="{% url 'login' %}" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}" />
+
+          <div class="mb-3">
+            <label class="form-label" for="login-email">El. paštas arba vartotojo vardas</label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-person"></i>
+              <input type="text" id="login-email" name="username"
+                     class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                     placeholder="vardas@example.com"
+                     value="{{ form.username.value|default:'' }}"
+                     autocomplete="username" required />
+              {% if form.username.errors %}
+                <div class="invalid-feedback">{{ form.username.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label mb-0" for="login-password">Slaptažodis</label>
+              <a href="{% url 'password_reset' %}" class="text-muted-custom">Pamiršai?</a>
+            </div>
+            <div class="input-icon-wrap">
+              <i class="bi bi-lock"></i>
+              <input type="password" id="login-password" name="password"
+                     class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                     placeholder="••••••••"
+                     autocomplete="current-password" required />
+              {% if form.password.errors %}
+                <div class="invalid-feedback">{{ form.password.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="remember" name="remember" />
+            <label class="form-check-label text-muted-custom" for="remember">Prisiminti mane</label>
+          </div>
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2">{{ form.non_field_errors.0 }}</div>
+          {% endif %}
+
+          <button type="submit" class="btn btn-accent w-100 py-2 mt-1">
+            Prisijungti <i class="bi bi-arrow-right ms-1"></i>
+          </button>
+        </form>
+
+        <!-- ════════════════════════════════
+             REGISTER FORM
+             ════════════════════════════════ -->
+        {% else %}
+        <form method="post" action="{% url 'register' %}" novalidate>
+          {% csrf_token %}
+
+          <div class="row g-3 mb-3">
+            <div class="col">
+              <label class="form-label" for="first-name">Vardas</label>
+              <input type="text" id="first-name" name="first_name"
+                     class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                     placeholder="Jonas"
+                     value="{{ form.first_name.value|default:'' }}" />
+              {% if form.first_name.errors %}
+                <div class="invalid-feedback">{{ form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col">
+              <label class="form-label" for="last-name">Pavardė</label>
+              <input type="text" id="last-name" name="last_name"
+                     class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                     placeholder="Jonaitis"
+                     value="{{ form.last_name.value|default:'' }}" />
+              {% if form.last_name.errors %}
+                <div class="invalid-feedback">{{ form.last_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="reg-email">El. paštas</label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-envelope"></i>
+              <input type="email" id="reg-email" name="email"
+                     class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                     placeholder="vardas@example.com"
+                     value="{{ form.email.value|default:'' }}"
+                     autocomplete="email" required />
+              {% if form.email.errors %}
+                <div class="invalid-feedback">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="reg-username">Vartotojo vardas</label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-at"></i>
+              <input type="text" id="reg-username" name="username"
+                     class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                     placeholder="jonas123"
+                     value="{{ form.username.value|default:'' }}"
+                     autocomplete="username" required />
+              {% if form.username.errors %}
+                <div class="invalid-feedback">{{ form.username.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="reg-password">Slaptažodis</label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-lock"></i>
+              <input type="password" id="reg-password" name="password1"
+                     class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                     placeholder="Min. 8 simboliai"
+                     autocomplete="new-password" required
+                     oninput="updateStrength(this.value)" />
+              {% if form.password1.errors %}
+                <div class="invalid-feedback">{{ form.password1.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="strength-bar mt-2">
+              <div class="strength-bar-fill" id="strength-fill"></div>
+            </div>
+            <small id="strength-label" class="text-muted-custom"></small>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="reg-password2">Pakartokite slaptažodį</label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-lock-fill"></i>
+              <input type="password" id="reg-password2" name="password2"
+                     class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                     placeholder="••••••••"
+                     autocomplete="new-password" required />
+              {% if form.password2.errors %}
+                <div class="invalid-feedback">{{ form.password2.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="terms" name="terms" required />
+            <label class="form-check-label text-muted-custom" for="terms">
+              Sutinku su <a href="{% url 'terms' %}">naudojimo sąlygomis</a>
+            </label>
+          </div>
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2">{{ form.non_field_errors.0 }}</div>
+          {% endif %}
+
+          <button type="submit" class="btn btn-accent w-100 py-2 mt-1">
+            Sukurti paskyrą <i class="bi bi-arrow-right ms-1"></i>
+          </button>
+        </form>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <p class="text-center text-muted-custom mt-4">
+      © {{ current_year }} todo. · Visi teisės saugomos
+    </p>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function updateStrength(val) {
+  const fill  = document.getElementById('strength-fill');
+  const label = document.getElementById('strength-label');
+  let score = 0;
+  if (val.length >= 8)          score++;
+  if (/[A-Z]/.test(val))        score++;
+  if (/[0-9]/.test(val))        score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const map = [
+    { pct: '0%',   color: 'transparent',  text: '' },
+    { pct: '25%',  color: '#ff4d6d',      text: 'Labai silpnas' },
+    { pct: '50%',  color: '#ffbe0b',      text: 'Silpnas' },
+    { pct: '75%',  color: '#00b4d8',      text: 'Vidutinis' },
+    { pct: '100%', color: '#00e5a0',      text: 'Stiprus' },
+  ];
+  const s = map[score];
+  fill.style.width      = s.pct;
+  fill.style.background = s.color;
+  label.textContent     = s.text;
+  label.style.color     = s.color;
+}
+</script>
+{% endblock %}

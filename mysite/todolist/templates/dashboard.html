@@ -6,6 +6,7 @@
 
 {% block content %}
 
+{% if user.is_authenticated %}
 <!-- ── Page header ── -->
 <div class="page-header">
   <div>
@@ -195,6 +196,10 @@
       </a>
     {% endif %}
   </div>
+{% endif %}
+
+{% else %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'login'%}">Prisijungti</a></li>
 {% endif %}
 
 {% endblock %}

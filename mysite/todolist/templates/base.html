@@ -36,7 +36,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="">
+              <a class="nav-link" href="{% url 'logout' %}">
                 <img src="{{ user.avatar_url|default:'/static/img/avatar-placeholder.png' }}"
                      class="rounded-circle me-1"
                      width="22" height="22" alt="Avatar" />
@@ -126,7 +126,10 @@
 
     <!-- Main content -->
     <main class="main-content">
-      {% block content %}{% endblock %}
+      {% block content %}
+
+
+      {% endblock %}
     </main>
   </div>
 
