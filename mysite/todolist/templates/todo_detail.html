@@ -10,6 +10,14 @@
 <nav aria-label="breadcrumb" class="mb-3">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Skydelis</a></li>
+    {% if todo.list %}
+      <li class="breadcrumb-item">
+        <a href="{% url 'todos_list' todo.list.pk %}"
+           style="color:{{ todo.list.color|default:'var(--text-muted)' }}">
+          <i class="{{ todo.list.icon|default:'bi-collection' }} me-1"></i>{{ todo.list.name }}
+        </a>
+      </li>
+    {% endif %}
     <li class="breadcrumb-item active" aria-current="page">
       {% if todo %}{{ todo.title|truncatechars:40 }}{% else %}Nauja užduotis{% endif %}
     </li>
@@ -133,6 +141,20 @@
             <span class="status-pill pending"><i class="bi bi-hourglass-split"></i>Nauja</span>
           {% endif %}
         </div>
+      </div>
+
+      <!-- Sąrašas -->
+      <div class="meta-row flex-column align-items-start gap-2">
+        <span class="meta-label"><i class="bi bi-collection"></i>Sąrašas</span>
+        <select name="list_id" class="form-select form-select-sm">
+          <option value="">— Be sąrašo —</option>
+          {% for lst in user_lists %}
+            <option value="{{ lst.pk }}"
+              {% if todo.list_id == lst.pk or form.list_id.value == lst.pk|stringformat:'s' %}selected{% endif %}>
+              {{ lst.name }}
+            </option>
+          {% endfor %}
+        </select>
       </div>
 
       <!-- Priority -->

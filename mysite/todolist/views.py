@@ -12,17 +12,18 @@ def index(request):
     context = {
         'num_visits': num_visits,
         'todo_list_counts': todo_list_counts,
+        'todolists':  Todolist.objects.all(),
     }
 
-    return render(request, template_name="index.html", context=context)
-
-
-def dashboard(request):
-    todolists = Todolist.objects.all()
-    context = {
-             todolists: todolists,
-    }
     return render(request, template_name="dashboard.html", context=context)
+
+
+# def dashboard(request):
+#     todolists = Todolist.objects.all()
+#     context = {
+#              todolists: todolists,
+#     }
+#     return render(request, template_name="dashboard.html", context=context)
 
 # class TodolistView(LoginRequiredMixin, generic.ListView):
 #     model = Todolist
