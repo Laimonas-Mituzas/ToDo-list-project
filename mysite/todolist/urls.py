@@ -5,4 +5,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     # path('dashboard/', views.dashboard, name='dashboard'),
     # path('dashboard/', views.TodolistView, name='dashboard'),
+    # path('todolist/<int:owner>', views.todolist, name='todolist')
  ]

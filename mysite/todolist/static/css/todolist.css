@@ -1132,6 +1132,10 @@ a:hover { color: var(--accent-dim); }
   transform: translateY(-2px);
 }
 
+.list-card-content {
+  padding: 1.1rem 1.2rem;
+}
+
 .list-card-header {
   display: flex;
   align-items: center;
@@ -1217,6 +1221,12 @@ a:hover { color: var(--accent-dim); }
   border-radius: 2px;
   transition: width .6s ease;
 }
+.list-desc {
+    font-size: .85rem;
+  color: var(--text-muted);
+  margin-top: .25rem;
+}
+
 
 /* Naujo sąrašo placeholder kortelė */
 .list-card-new {

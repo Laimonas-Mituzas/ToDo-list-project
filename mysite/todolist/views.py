@@ -5,24 +5,31 @@ from .models import Todolist, TodolistItem
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 def index(request):
-    todo_list_counts = Todolist.objects.all().count()
+    # todolists = Todolist.objects.get(pk=owner) # visi sarasai, kuriuos sukure vartotojas
+    todolists = Todolist.objects.filter(owner=request.user) # visi sarasai, kuriuos sukure vartotojas
+    # todolists = Todolist.objects.all()
+    todolists_counts = Todolist.objects.all().count() # kiek is viso sarasu
+    todolist_items = TodolistItem.objects.all() # kiek viso uzduoziu visuose sarauose
     num_visits = request.session.get('num_visits', 1)
     request.session['num_visits'] = num_visits + 1
 
     context = {
         'num_visits': num_visits,
-        'todo_list_counts': todo_list_counts,
-        'todolists':  Todolist.objects.all(),
+        # 'todolist': todolist,
+        'todolists':  todolists,
+        'todolists_counts': todolists_counts,
+        'todolist_items': todolist_items,
+
     }
 
     return render(request, template_name="dashboard.html", context=context)
 
 
-# def dashboard(request):
-#     todolists = Todolist.objects.all()
-#     context = {
-#              todolists: todolists,
-#     }
+# class TodoListView(generic.ListView):
+#     model = Todolist
+#     template_name = 'dashboard.html'
+#     context_object_name = 'todolist'
+#
 #     return render(request, template_name="dashboard.html", context=context)
 
 # class TodolistView(LoginRequiredMixin, generic.ListView):

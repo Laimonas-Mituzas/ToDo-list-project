@@ -84,7 +84,7 @@
       <p class="sidebar-section-title">Rodiniai</p>
       <a href="" class="sidebar-link {% block sb_all %}{% endblock %}">
         <i class="bi bi-list-ul"></i> Visi
-        <span class="sidebar-badge">{{ todo_counts.all|default:'0' }}</span>
+        <span class="sidebar-badge">{{ TodoList.total_items|default:'0' }}</span>
       </a>
       <a href="" class="sidebar-link {% block sb_today %}{% endblock %}">
         <i class="bi bi-sun"></i> Šiandien
