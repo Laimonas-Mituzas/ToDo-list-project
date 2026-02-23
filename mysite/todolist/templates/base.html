@@ -31,16 +31,16 @@
         <ul class="navbar-nav ms-auto align-items-center gap-1">
           {% if user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link {% block nav_dashboard %}{% endblock %}" href="">
+              <a class="nav-link {% block nav_dashboard %}{% endblock %}" href="{% url 'index' %}">
                 <i class="bi bi-grid me-1"></i>Skydelis
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">
+              <a class="nav-link" href="{% url 'profile' %}">
                 <img src="{{ user.avatar_url|default:'/static/img/avatar-placeholder.png' }}"
                      class="rounded-circle me-1"
                      width="22" height="22" alt="Avatar" />
-                {{ user.get_short_name }}
+                {{ user.get_username }}
               </a>
             </li>
             <li class="nav-item ms-2">

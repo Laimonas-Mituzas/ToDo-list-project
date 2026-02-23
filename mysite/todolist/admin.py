@@ -1,5 +1,12 @@
 from django.contrib import admin
 from .models import Todolist, TodolistItem
+from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser
+
+class CustomUserAdmin(UserAdmin):
+    fieldsets = UserAdmin.fieldsets + (
+        ('Additional Info', {'fields': ('avatar',)}),
+    )
 
 class TodolistAdminInline(admin.TabularInline):
     model = TodolistItem
@@ -22,3 +29,4 @@ class TodolistItemAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Todolist, TodolistAdmin)
 admin.site.register(TodolistItem, TodolistItemAdmin)
+admin.site.register(CustomUser, CustomUserAdmin)

@@ -105,3 +105,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# media folder settings
+MEDIA_ROOT = os.path.join(BASE_DIR, 'todolist/media')
+MEDIA_URL = '/media/'
+
+AUTH_USER_MODEL = 'todolist.CustomUser'

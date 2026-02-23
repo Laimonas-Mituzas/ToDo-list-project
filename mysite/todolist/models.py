@@ -1,14 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
 
+class CustomUser(AbstractUser):
+    avatar = models.ImageField(upload_to="profile_pics", null=True, blank=True)
 
 # Sarasu modelis
 class Todolist(models.Model):
     title = models.CharField(verbose_name="Title",max_length=200)
     description = models.TextField(max_length=2000, null=True, blank=True)
     completed = models.BooleanField(default=False)
-    owner = models.ForeignKey(to=User,
+    owner = models.ForeignKey(to="todolist.CustomUser",
                               verbose_name="Savininkas",
                               on_delete=models.SET_NULL,
                               null=True, blank=True)
@@ -42,4 +45,5 @@ class TodolistItem(models.Model):
 
     def __str__(self):
         return self.title
+
 
