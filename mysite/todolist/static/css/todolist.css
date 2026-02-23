@@ -825,7 +825,7 @@ a:hover { color: var(--accent-dim); }
   background: transparent;
   border: none;
   color: #e4e8f0;
-  font-size: .88rem;
+  font-size: 1rem;
   outline: none;
 }
 
@@ -1195,6 +1195,10 @@ a:hover { color: var(--accent-dim); }
   font-family: 'Syne', sans-serif;
   font-weight: 700;
   font-size: 1rem;
+}
+.list-title {
+    color: #00e5a0;
+    text-transform: uppercase;
 }
 
 .list-meta {

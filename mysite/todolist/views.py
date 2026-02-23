@@ -25,12 +25,10 @@ def index(request):
     return render(request, template_name="dashboard.html", context=context)
 
 
-# class TodoListView(generic.ListView):
-#     model = Todolist
-#     template_name = 'dashboard.html'
-#     context_object_name = 'todolist'
-#
-#     return render(request, template_name="dashboard.html", context=context)
+class TodolistDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Todolist
+    template_name = 'todolist.html'
+    context_object_name = 'todolist'
 
 # class TodolistView(LoginRequiredMixin, generic.ListView):
 #     model = Todolist
@@ -39,15 +37,15 @@ def index(request):
 #
 #     def get_queryset(self):
 #         return Todolist.objects.filter(owner=self.request.user)  # type: ignore[attr-defined]
-
-class todolist_create(LoginRequiredMixin, generic.CreateView):
-    model = Todolist
-    template_name = 'todolist_form.html'
-    fields = ['title', 'description', 'deadline']
-
-    def form_valid(self, form):
-        form.instance.owner = self.request.user  # type: ignore[attr-defined]
-        return super().form_valid(form)
+#
+# class todolist_create(LoginRequiredMixin, generic.CreateView):
+#     model = Todolist
+#     template_name = 'todolist_form.html'
+#     fields = ['title', 'description', 'deadline']
+#
+#     def form_valid(self, form):
+#         form.instance.owner = self.request.user  # type: ignore[attr-defined]
+#         return super().form_valid(form)
 
 class todo_create(LoginRequiredMixin, generic.CreateView):
     # model = TodolistItem

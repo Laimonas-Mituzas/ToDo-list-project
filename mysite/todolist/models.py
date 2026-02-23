@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
-# Create your models here.
+# Sarasu modelis
 class Todolist(models.Model):
     title = models.CharField(verbose_name="Title",max_length=200)
     description = models.TextField(max_length=2000, null=True, blank=True)
@@ -29,6 +29,7 @@ class Todolist(models.Model):
     def __str__(self):
         return self.title
 
+# Uzduociu modelis
 class TodolistItem(models.Model):
     todolist = models.ForeignKey(Todolist, on_delete=models.CASCADE, related_name='items')
     title = models.CharField(verbose_name="Title", max_length=200)
