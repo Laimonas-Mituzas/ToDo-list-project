@@ -6,6 +6,7 @@ urlpatterns = [
     # path('dashboard/', views.dashboard, name='dashboard'),
     path('todolist/<int:pk>', views.TodolistDetailView.as_view(), name='todolist'),
     path("todolist/create", views.TodolistCreateView.as_view(), name="todolist_create"),
+    path("todolist/<int:pk>/delete", views.TodolistDeleteView.as_view(), name="todolist_delete"),
     path('profile/', views.ProfileUpdateView.as_view(), name='profile'),
 
  ]

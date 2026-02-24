@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{% if todo %}{{ todo.title }}{% else %}Nauja užduotis{% endif %} · todo.{% endblock %}
+
+{% load static %}
+
+
+{% block content %}
+<div class="content-section">
+    <form method="POST">
+        {% csrf_token %}
+        {% load crispy_forms_tags %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Ištrinti sarasa</legend>
+            <h3>Ar tikrai norite ištrinti sarasa </h3>
+            <h2>"{{ todolist.title }}"?</h2>
+            <div class="form-group">
+                <button class="btn btn-outline-danger" type="submit">Taip, ištrinti</button>
+                <a class="btn btn-outline-secondary" href="{% url 'todolist' todolist.pk %}">Atšaukti</a>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

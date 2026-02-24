@@ -131,6 +131,10 @@
   </button>
   <a href="{% url 'index' %}" class="btn btn-ghost px-4 py-2">Atšaukti</a>
 
+  <a href="{% url 'todolist_delete' todolist.pk %}" class="btn btn-ghost px-3 py-2" style="color:var(--danger-soft)">
+          <i class="bi bi-trash me-1"></i>Ištrinti
+        </a>
+
   {% if todo %}
     <div class="ms-auto d-flex gap-2">
       <!-- Toggle complete -->
@@ -145,7 +149,7 @@
         </button>
       </form>
       <!-- Delete -->
-      <form method="post" action="{% url 'todo_delete' todo.pk %}"
+      <form method="post" action="{% url 'todolsit_delete' todolist.pk %}"
             onsubmit="return confirm('Tikrai ištrinti šią užduotį?')">
         {% csrf_token %}
         <button type="submit" class="btn btn-ghost px-3 py-2" style="color:var(--danger-soft)">

@@ -49,6 +49,11 @@ class TodolistCreateView(LoginRequiredMixin, generic.CreateView):
         form.save()
         return super().form_valid(form)
 
+class TodolistDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Todolist
+    template_name = 'todolist_delete.html'
+    success_url = reverse_lazy('index')
+
 
 
 class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
