@@ -1,16 +1,14 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, reverse
+from django.urls import reverse_lazy
 from django.views import generic
 from .models import Todolist, TodolistItem, CustomUser
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-# from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from .forms import UserChangeForm, CustomUserCreateForm
+from .forms import UserChangeForm, CustomUserCreateForm, TodolistCreateUpdateForm
+
 
 def index(request):
-    # todolists = Todolist.objects.get(pk=owner) # visi sarasai, kuriuos sukure vartotojas
     todolists = Todolist.objects.filter(owner=request.user) # visi sarasai, kuriuos sukure vartotojas
-    # todolists = Todolist.objects.all()
     todolists_counts = Todolist.objects.all().count() # kiek is viso sarasu
     todolist_items = TodolistItem.objects.all() # kiek viso uzduoziu visuose sarauose
     num_visits = request.session.get('num_visits', 1)
@@ -18,7 +16,6 @@ def index(request):
 
     context = {
         'num_visits': num_visits,
-        # 'todolist': todolist,
         'todolists':  todolists,
         'todolists_counts': todolists_counts,
         'todolist_items': todolist_items,
@@ -33,28 +30,26 @@ class TodolistDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'todolist.html'
     context_object_name = 'todolist'
 
-# class TodolistView(LoginRequiredMixin, generic.ListView):
-#     model = Todolist
-#     template_name = 'dashboard.html'
-#     context_object_name = 'todolists'
-#
-#     def get_queryset(self):
-#         return Todolist.objects.filter(owner=self.request.user)  # type: ignore[attr-defined]
-#
-# class todolist_create(LoginRequiredMixin, generic.CreateView):
-#     model = Todolist
-#     template_name = 'todolist_form.html'
-#     fields = ['title', 'description', 'deadline']
-#
-#     def form_valid(self, form):
-#         form.instance.owner = self.request.user  # type: ignore[attr-defined]
-#         return super().form_valid(form)
+    def get_queryset(self):
+        return Todolist.objects.filter(owner=self.request.user)
 
-class todo_create(LoginRequiredMixin, generic.CreateView):
-    # model = TodolistItem
-    # template_name = 'todo_form.html'
-    # fields = ['todolist', 'title', 'description']
-    pass
+
+class TodolistCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Todolist
+    template_name = 'todolist_create.html'
+    form_class = TodolistCreateUpdateForm
+    #fields = ['title', 'description', 'deadline']
+    # success_url = reverse_lazy('todolist/<int:pk>')
+
+    def get_success_url(self):
+        return reverse("todolist", kwargs={"pk": self.object.id})
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        form.save()
+        return super().form_valid(form)
+
+
 
 class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
     form_class = UserChangeForm

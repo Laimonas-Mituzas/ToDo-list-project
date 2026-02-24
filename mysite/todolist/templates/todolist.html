@@ -57,7 +57,9 @@
               <input type="checkbox" name="subtask_done_{{ subtask.pk }}"
                      {% if subtask.is_done %}checked{% endif %} />
               <input type="text" name="item_title_{{ item.title }}"
-                     value="{{ item.title }}" />
+                     value="{{ item.title }}"
+                     value_id="{{ item.pk }}"
+                        />
               <button type="button" class="del-sub" onclick="this.closest('.checklist-item').remove()">
                 <i class="bi bi-x-lg"></i>
               </button>
