@@ -25,8 +25,8 @@ class Todolist(models.Model):
     def total_items(self):
         return self.items.count()
 
-    def is_overdue(self):
-        return self.due_back and timezone.now().date() > self.due_back
+    def is_overpassed(self):
+        return self.deadline and timezone.now().date() > self.deadline
 
 
     def __str__(self):

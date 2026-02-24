@@ -19,3 +19,5 @@ class TodolistCreateUpdateForm(forms.ModelForm):
         model = Todolist
         fields = ['title', 'description', 'deadline']
         widgets = {'deadline': forms.DateInput(attrs={'type': 'date'})}
+
+

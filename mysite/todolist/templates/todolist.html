@@ -33,6 +33,12 @@
           </p>
         </div>
 
+         <!-- Deadline-->
+        <div class="mb-3">
+            <p class="alert alert-danger"> Atlikti iki {{ todolist.deadline|date:"Y-m-d" }}
+          </p>
+        </div>
+
       </div>
     </div>
 
@@ -103,18 +109,12 @@
 
 
     <!-- Info (edit mode) -->
-    {% if todo %}
+    {% if todolist %}
     <div class="meta-card">
       <div class="meta-row">
         <span class="meta-label"><i class="bi bi-info-circle"></i>Sukurta</span>
         <span class="meta-value" style="font-size:.8rem;color:var(--text-muted)">
-          {{ todo.created_at|date:"Y-m-d H:i" }}
-        </span>
-      </div>
-      <div class="meta-row">
-        <span class="meta-label"><i class="bi bi-pencil"></i>Keista</span>
-        <span class="meta-value" style="font-size:.8rem;color:var(--text-muted)">
-          {{ todo.updated_at|date:"Y-m-d H:i" }}
+          {{ todolist.created_at|date:"Y-m-d" }}
         </span>
       </div>
     </div>
@@ -129,6 +129,8 @@
     <i class="bi bi-floppy me-1"></i>
     {% if todolist.items %}Išsaugoti{% else %}Sukurti užduotį{% endif %}
   </button>
+  <a href="{% url 'todolist_update' todolist.pk %}" class="btn btn-accent px-4 py-2">Redaguoti</a>
+
   <a href="{% url 'index' %}" class="btn btn-ghost px-4 py-2">Atšaukti</a>
 
   <a href="{% url 'todolist_delete' todolist.pk %}" class="btn btn-ghost px-3 py-2" style="color:var(--danger-soft)">

@@ -33,7 +33,7 @@
     <div class="list-card-content">
       <div class="list-name">{{ todolist.title }}</div>
       <div class="list-meta">
-        <span class="list-count">Viso uzduociu: {{ todolist.items.count }} </span>
+        <span class="list-count">Viso užduočių: {{ todolist.items.count }} </span>
         {% if lst.done_count %}
           <span class="list-done-count">
             <i class="bi bi-check2 me-1"></i>{{ lst.done_count }} atlikta
@@ -46,7 +46,10 @@
         </div>
       {% endif %}
       <hr>
-      <span class="list-desc">{{ lst.description }}</span>
+      <span class="list-desc">{{ todolist.description }}</span>
+      {% if todolist.deadline %}
+      <p class="--bs-light-text-emphasis"> Atlikti iki {{ todolist.deadline|date:"Y-m-d" }}
+      {% endif %}
     </div>
   </a>
     </div>

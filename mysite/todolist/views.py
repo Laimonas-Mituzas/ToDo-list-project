@@ -54,6 +54,14 @@ class TodolistDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = 'todolist_delete.html'
     success_url = reverse_lazy('index')
 
+class TodolistUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Todolist
+    template_name = 'todolist_create.html'
+    form_class = TodolistCreateUpdateForm
+
+    def get_success_url(self):
+        return reverse("todolist", kwargs={"pk": self.object.id})
+
 
 
 class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
