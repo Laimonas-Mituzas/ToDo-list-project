@@ -24,3 +24,8 @@ class TodolistItemCreateForm(forms.ModelForm):
     class Meta:
         model = TodolistItem
         fields = ['title']
+
+class TodolistItemUpdateForm(forms.ModelForm):
+    class Meta:
+        model = TodolistItem
+        fields = ['title', 'completed']

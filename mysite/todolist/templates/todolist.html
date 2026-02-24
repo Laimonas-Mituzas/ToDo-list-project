@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <!-- ── Checklist ── -->
+    <!-- ── CHECKLIST ── -->
     <div class="card mb-3">
       <div class="card-header d-flex justify-content-between align-items-center">
         <span class="fw-600" style="font-family:'Syne',sans-serif;font-weight:600">
@@ -57,20 +57,33 @@
 
          <div class="card-body p-3">
         <div class="checklist" id="checklist-container">
-          {% if todolist.items %}
-            {%for item in todolist.items.all %}
-            <div class="checklist-item">
-              <input type="checkbox" name="subtask_done_{{ subtask.pk }}"
-                     {% if subtask.is_done %}checked{% endif %} />
-              <input type="text" name="item_title_{{ item.title }}"
+
+          {% if todolist.items.all %}
+            {% for item in todolist.items.all %}
+
+            <div class="checklist-item{% if item.completed %} completed{% endif %}">
+              <form method="post" action="" class="d-inline item-toggle-form">
+                {% csrf_token %}
+                <input class="toggle-checkbox" type="checkbox" name="item_done_{{ item.pk }}"
+                       {% if item.completed %}checked{% endif %} />
+              </form>
+
+              <input type="text" name="item_title_{{ item.pk }}"
                      value="{{ item.title }}"
-                     value_id="{{ item.pk }}"
-                        />
-              <button type="button" class="del-sub" onclick="this.closest('.checklist-item').remove()">
-                <i class="bi bi-x-lg"></i>
+                     data-item-id="{{ item.pk }}"
+                     class="form-control" readonly />
+              <button type="button" class="edit-sub"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editItemModal"
+                      onclick="openEditItemModal({{ item.pk }}, '{{ item.title|escapejs }}')">
+                <i class="bi bi-pencil"></i>
               </button>
             </div>
+
             {% endfor %}
+          {% else %}
+
+            <p class="text-muted">Šiam sąrašui nėra užduočių.</p>
           {% endif %}
         </div>
         <button type="button" class="btn btn-ghost btn-sm mt-2 " data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="addSubtask()">
@@ -127,10 +140,10 @@
 
 <!-- ── Action bar ── -->
 <div class="action-bar">
-  <a class="btn btn-accent px-4 py-2" href="{% url 'index' %}">
+  <button id="save-todolist" type="button" class="btn btn-accent px-4 py-2">
     <i class="bi bi-floppy me-1"></i>
     Išsaugoti
-  </a>
+  </button>
   <a href="{% url 'todolist_update' todolist.pk %}" class="btn btn-accent px-4 py-2">Redaguoti</a>
 
   <a href="{% url 'index' %}" class="btn btn-ghost px-4 py-2">Atšaukti</a>
@@ -174,20 +187,68 @@
         <h1 class="modal-title fs-5" id="staticBackdropLabel">Prideti užduotį</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <form method="post" action="{% url 'todolist_item_create' todolist.pk  %}">
+      <form method="post" action="{% url 'todolist_item_create' todolist.pk  %}">
           {% csrf_token %}
+      <div class="modal-body">
+
               {% load crispy_forms_tags %}
           {{ form | crispy }}
-          <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal-item-create">Išsaugoti</button>
-        </form>
 
       </div>
       <div class="modal-footer">
-
-
-        <button type="button" class="btn btn-primary">Uždaryti</button>
+        <button type="button" class="btn btn-ghost px-4" data-bs-dismiss="modal">Atšaukti</button>
+        <button type="submit" class="btn btn-accent px-4" data-bs-dismiss="modal">Išsaugoti</button>
       </div>
+        </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal užduočiai redaguoti -->
+<div class="modal fade" id="editItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius)">
+      <div class="modal-header" style="border-bottom:1px solid var(--border)">
+        <h5 class="modal-title" id="editItemModalLabel" style="font-family:'Syne',sans-serif;font-weight:700">
+          <i class="bi bi-pencil me-2" style="color:var(--accent)"></i>Redaguoti užduotį
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" id="editItemForm" action="" novalidate>
+        {% csrf_token %}
+        <div class="modal-body" style="padding:1.5rem">
+
+          <div class="mb-3">
+            <label class="form-label" for="editItemTitle">Pavadinimas</label>
+            <input type="text" id="editItemTitle" name="title"
+                   class="form-control"
+                   placeholder="Užduoties pavadinimas…"
+                   required autocomplete="off" />
+          </div>
+
+          <div class="mb-0">
+            <label class="form-label">Būsena</label>
+            <div class="d-flex gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="completed" id="editItemActive" value="0" />
+                <label class="form-check-label" for="editItemActive">Neatlikta</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="completed" id="editItemDone" value="1" />
+                <label class="form-check-label" for="editItemDone">Atlikta</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer" style="border-top:1px solid var(--border)">
+          <button type="button" class="btn btn-ghost px-4" data-bs-dismiss="modal">Atšaukti</button>
+          <button type="submit" class="btn btn-accent px-4">
+            <i class="bi bi-floppy me-1"></i>Išsaugoti
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -196,6 +257,35 @@
 
 {% block extra_scripts %}
 <script>
+
+/* ── Redagavimo modalas ── */
+function openEditItemModal(itemPk, itemTitle, isCompleted) {
+  // Nustatome formos action URL
+  document.getElementById('editItemForm').action =
+    `/todolist/{{ todolist.pk }}/item/${itemPk}/edit/`;
+
+  // Užpildome laukus
+  document.getElementById('editItemTitle').value = itemTitle;
+
+  // Būsena — paimama iš checklist-item klasės
+  const row = document.querySelector(`input[name="item_title_${itemPk}"]`)?.closest('.checklist-item');
+  const isDone = row ? row.classList.contains('completed') : false;
+  document.getElementById('editItemActive').checked = !isDone;
+  document.getElementById('editItemDone').checked   =  isDone;
+}
+
+/* Kai modalas atsidaro — sufokusuojame pavadinimo lauką */
+document.getElementById('editItemModal').addEventListener('shown.bs.modal', () => {
+  document.getElementById('editItemTitle').focus();
+});
+
+/* Kai modalas uždaromas — išvalom laukus */
+document.getElementById('editItemModal').addEventListener('hidden.bs.modal', () => {
+  document.getElementById('editItemTitle').value = '';
+  document.getElementById('editItemForm').action = '';
+  document.getElementById('editItemActive').checked = true;
+  document.getElementById('editItemDone').checked   = false;
+});
 
   const myModal = document.getElementById('myModal')
 const myInput = document.getElementById('myInput')
@@ -258,5 +348,61 @@ function addTag() {
 function removeTag(el, id) {
   el.closest('.tag-chip').remove();
 }
+
+// Auto-submit checkbox forms when toggled (single-click behavior)
+document.addEventListener('change', function (e) {
+  if (e.target && e.target.classList.contains('toggle-checkbox')) {
+    // if user toggles checkbox directly, submit that single toggle form
+    const form = e.target.closest('form');
+    if (form && form.classList.contains('item-toggle-form')) {
+      // submit via fetch so we don't navigate away
+      submitFormViaFetch(form).then(() => {
+        // reload to reflect latest state
+        window.location.reload();
+      });
+    }
+  }
+});
+
+// Helper: submit a form element via fetch (form fields will include csrf token input)
+async function submitFormViaFetch(form) {
+  const action = form.getAttribute('action') || window.location.href;
+  const method = (form.getAttribute('method') || 'post').toUpperCase();
+  const formData = new FormData(form);
+  const body = new URLSearchParams();
+  for (const pair of formData.entries()) {
+    body.append(pair[0], pair[1]);
+  }
+  return fetch(action, {
+    method: method,
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: body.toString(),
+  });
+}
+
+// When Save button clicked, submit all toggle forms (batch save) then reload
+document.getElementById('save-todolist').addEventListener('click', async function (e) {
+  e.preventDefault();
+  const forms = Array.from(document.querySelectorAll('.item-toggle-form'));
+  if (forms.length === 0) {
+    // nothing to save, reload or do nothing
+    window.location.reload();
+    return;
+  }
+
+  // submit all forms in parallel, wait for them to finish
+  try {
+    await Promise.all(forms.map(f => submitFormViaFetch(f)));
+    // after saving toggles, reload to reflect changes
+    window.location.reload();
+  } catch (err) {
+    console.error('Failed to save checklist items', err);
+    alert('Klaida išsaugant užduočių būsenas. Patikrinkite konsolę.');
+  }
+});
+
 </script>
 {% endblock %}

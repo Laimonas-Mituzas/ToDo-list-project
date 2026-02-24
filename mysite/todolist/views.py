@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, reverse
-from django.urls import reverse_lazy
 from django.views import generic
-from .models import Todolist, TodolistItem, CustomUser
+from .models import Todolist, TodolistItem
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .forms import UserChangeForm, CustomUserCreateForm, TodolistCreateUpdateForm, TodolistItemCreateForm
@@ -10,7 +9,7 @@ from .forms import UserChangeForm, CustomUserCreateForm, TodolistCreateUpdateFor
 def index(request):
     todolists = Todolist.objects.filter(owner=request.user) # visi sarasai, kuriuos sukure vartotojas
     todolists_counts = Todolist.objects.all().count() # kiek is viso sarasu
-    todolist_items = TodolistItem.objects.all() # kiek viso uzduoziu visuose sarauose
+    todolist_items = TodolistItem.objects.all() # kiek viso uzduočių visuose sarauose
     num_visits = request.session.get('num_visits', 1)
     request.session['num_visits'] = num_visits + 1
 
@@ -54,6 +53,8 @@ class TodolistCreateView(LoginRequiredMixin, generic.CreateView):
         form.save()
         return super().form_valid(form)
 
+
+
 class TodolistDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Todolist
     template_name = 'todolist_delete.html'
@@ -82,9 +83,48 @@ def TodolistItemCreateView(request, todolist_pk):
         form = TodolistItemCreateForm()
     return render(request, 'todolist.html', {'form': form})
 
-# def TodolistItemDeleteView(request, todolist_pk, item_pk):
-#     item = TodolistItem.objects.get(id=item_pk)
-#     item.delete()
+def TodolistItemUpdateView(request, todolist_pk, item_pk):
+    try:
+        item = TodolistItem.objects.select_related('todolist').get(pk=item_pk, todolist__pk=todolist_pk)
+    except TodolistItem.DoesNotExist:
+        return redirect('todolist', pk=todolist_pk)
+
+    if request.method == 'POST':
+        form = TodolistItemUpdateForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect('todolist', pk=todolist_pk)
+    else:
+        form = TodolistItemCreateForm(instance=item)
+
+    return render(request, 'todolist.html', {'form': form, 'item': item})
+
+
+# from django.contrib.auth.decorators import login_required
+#
+# @login_required
+# def TodolistItemToggleView(request, todolist_pk, item_pk):
+#     """Toggle or set `completed` on a TodolistItem based on submitted form data.
+#     Accepts POST only and redirects back to the todolist detail.
+#     """
+#     if request.method != 'POST':
+#         return redirect('todolist', pk=todolist_pk)
+#
+#     try:
+#         item = TodolistItem.objects.select_related('todolist').get(pk=item_pk, todolist__pk=todolist_pk)
+#     except TodolistItem.DoesNotExist:
+#         return redirect('todolist', pk=todolist_pk)
+#
+#     # Ensure the current user owns the todolist (safety check)
+#     if item.todolist.owner != request.user:
+#         return redirect('todolist', pk=todolist_pk)
+#
+#     # Determine checkbox field name for this item and set completed accordingly.
+#     checkbox_name = f'item_done_{item.pk}'
+#     # If the POST contains the checkbox field, it means checked -> True; otherwise False.
+#     item.completed = checkbox_name in request.POST
+#     item.save()
+#
 #     return redirect('todolist', pk=todolist_pk)
 
 
@@ -100,5 +140,3 @@ class SignUpView(generic.CreateView):
     form_class = CustomUserCreateForm
     template_name = "signup.html"
     success_url = reverse_lazy("login")
-
-

@@ -841,6 +841,16 @@ a:hover { color: var(--accent-dim); }
 
 .checklist-item .del-sub:hover { color: var(--danger-soft); }
 
+/** Papildomai prideta **/
+.checklist-item.completed {
+  opacity: 0.6;
+}
+
+.checklist-item.completed input[type="text"] {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
 /* Veiksmų istorija */
 .activity-item {
   display: flex;
