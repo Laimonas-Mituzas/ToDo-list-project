@@ -34,8 +34,8 @@
         </div>
 
          <!-- Deadline-->
-        <div class="mb-3">
-            <p class="alert alert-danger"> Atlikti iki {{ todolist.deadline|date:"Y-m-d" }}
+        <div class="mb-3" id="deadline-container">
+            <p class="alert {% if todolist.is_overpassed %}alert-danger{% endif %}"> Atlikti iki {{ todolist.deadline|date:"Y-m-d" }}
           </p>
         </div>
 
@@ -72,12 +72,12 @@
                      value="{{ item.title }}"
                      data-item-id="{{ item.pk }}"
                      class="form-control" readonly />
-              <button type="button" class="edit-sub"
+              <a class="edit-sub"
                       data-bs-toggle="modal"
                       data-bs-target="#editItemModal"
                       onclick="openEditItemModal({{ item.pk }}, '{{ item.title|escapejs }}')">
                 <i class="bi bi-pencil"></i>
-              </button>
+              </a>
             </div>
 
             {% endfor %}
@@ -182,7 +182,7 @@
 <!-- Modal uzduociai prideti -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content" style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius)">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="staticBackdropLabel">Prideti užduotį</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -215,31 +215,36 @@
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" id="editItemForm" action="" novalidate>
+      <form method="post" id="editItemForm" action="" >
+
         {% csrf_token %}
+
         <div class="modal-body" style="padding:1.5rem">
 
-          <div class="mb-3">
-            <label class="form-label" for="editItemTitle">Pavadinimas</label>
-            <input type="text" id="editItemTitle" name="title"
-                   class="form-control"
-                   placeholder="Užduoties pavadinimas…"
-                   required autocomplete="off" />
-          </div>
+          {% load crispy_forms_tags %}
+          {{ form | crispy }}
 
-          <div class="mb-0">
-            <label class="form-label">Būsena</label>
-            <div class="d-flex gap-3">
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="completed" id="editItemActive" value="0" />
-                <label class="form-check-label" for="editItemActive">Neatlikta</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="completed" id="editItemDone" value="1" />
-                <label class="form-check-label" for="editItemDone">Atlikta</label>
-              </div>
-            </div>
-          </div>
+<!--          <div class="mb-3">-->
+<!--            <label class="form-label" for="editItemTitle">Pavadinimas</label>-->
+<!--            <input type="text" id="editItemTitle" name="title"-->
+<!--                   class="form-control"-->
+<!--                   placeholder="Užduoties pavadinimas…"-->
+<!--                   required autocomplete="off" />-->
+<!--          </div>-->
+
+<!--          <div class="mb-0">-->
+<!--            <label class="form-label">Būsena</label>-->
+<!--            <div class="d-flex gap-3">-->
+<!--              <div class="form-check">-->
+<!--                <input class="form-check-input" type="radio" name="completed" id="editItemActive" value="0" />-->
+<!--                <label class="form-check-label" for="editItemActive">Neatlikta</label>-->
+<!--              </div>-->
+<!--              <div class="form-check">-->
+<!--                <input class="form-check-input" type="radio" name="completed" id="editItemDone" value="1" />-->
+<!--                <label class="form-check-label" for="editItemDone">Atlikta</label>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
 
         </div>
         <div class="modal-footer" style="border-top:1px solid var(--border)">

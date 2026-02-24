@@ -25,6 +25,9 @@ class Todolist(models.Model):
     def total_items(self):
         return self.items.count()
 
+    def is_completed(self):
+        return self.items.count() > 0 and self.items.filter(completed=False).count() == 0
+
     def is_overpassed(self):
         return self.deadline and timezone.now().date() > self.deadline
 

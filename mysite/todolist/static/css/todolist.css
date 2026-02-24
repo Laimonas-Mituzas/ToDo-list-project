@@ -184,7 +184,7 @@ a:hover { color: var(--accent-dim); }
 .btn-accent {
   background: var(--accent);
   color: #0f1117;
-  font-weight: 700;
+  font-weight: 500;
   border: none;
   border-radius: 9px;
   transition: all var(--transition);
@@ -523,6 +523,9 @@ a:hover { color: var(--accent-dim); }
   min-width: 180px;
 }
 
+.todolist-check {text-align: end;}
+.todolist-check .bi-check-circle::before {font-size: 25px;}
+
 
 /* ═══════════════════════════════════════════════════════════════
    12. TODOLIST SĄRAŠAS (dashboard.html)
@@ -849,6 +852,15 @@ a:hover { color: var(--accent-dim); }
 .checklist-item.completed input[type="text"] {
   text-decoration: line-through;
   color: var(--text-muted);
+}
+.checklist-item a.edit-sub{
+    width: 100px;
+    text-align: end;
+    padding-right: 20px;
+}
+
+.checklist-item a.edit-sub:hover{
+    cursor: pointer;
 }
 
 /* Veiksmų istorija */
@@ -1239,6 +1251,8 @@ a:hover { color: var(--accent-dim); }
     font-size: .85rem;
   color: var(--text-muted);
   margin-top: .25rem;
+  height: 45px;
+    margin-bottom: 10px;
 }
 
 
