@@ -4,7 +4,7 @@ from django.views import generic
 from .models import Todolist, TodolistItem, CustomUser
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from .forms import UserChangeForm, CustomUserCreateForm, TodolistCreateUpdateForm
+from .forms import UserChangeForm, CustomUserCreateForm, TodolistCreateUpdateForm, TodolistItemCreateForm
 
 
 def index(request):
@@ -30,6 +30,11 @@ class TodolistDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'todolist.html'
     context_object_name = 'todolist'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = TodolistItemCreateForm
+        return context
+
     def get_queryset(self):
         return Todolist.objects.filter(owner=self.request.user)
 
@@ -54,6 +59,8 @@ class TodolistDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = 'todolist_delete.html'
     success_url = reverse_lazy('index')
 
+
+
 class TodolistUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Todolist
     template_name = 'todolist_create.html'
@@ -62,6 +69,23 @@ class TodolistUpdateView(LoginRequiredMixin, generic.UpdateView):
     def get_success_url(self):
         return reverse("todolist", kwargs={"pk": self.object.id})
 
+
+def TodolistItemCreateView(request, todolist_pk):
+    if request.method == 'POST':
+        form = TodolistItemCreateForm(request.POST)
+        if form.is_valid():
+            todolist = Todolist.objects.get(id=todolist_pk)
+            form.instance.todolist = todolist
+            form.save()
+            return redirect('todolist', pk=todolist_pk)
+    else:
+        form = TodolistItemCreateForm()
+    return render(request, 'todolist.html', {'form': form})
+
+# def TodolistItemDeleteView(request, todolist_pk, item_pk):
+#     item = TodolistItem.objects.get(id=item_pk)
+#     item.delete()
+#     return redirect('todolist', pk=todolist_pk)
 
 
 class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):

@@ -73,11 +73,13 @@
             {% endfor %}
           {% endif %}
         </div>
-        <button type="button" class="btn btn-ghost btn-sm mt-2" onclick="addSubtask()">
+        <button type="button" class="btn btn-ghost btn-sm mt-2 " data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="addSubtask()">
           <i class="bi bi-plus me-1"></i>Pridėti
         </button>
       </div>
     </div>
+
+
 
     <!-- ── Activity ── -->
     {% if todo and todo.activity_log.all %}
@@ -125,10 +127,10 @@
 
 <!-- ── Action bar ── -->
 <div class="action-bar">
-  <button type="submit" class="btn btn-accent px-4 py-2">
+  <a class="btn btn-accent px-4 py-2" href="{% url 'index' %}">
     <i class="bi bi-floppy me-1"></i>
-    {% if todolist.items %}Išsaugoti{% else %}Sukurti užduotį{% endif %}
-  </button>
+    Išsaugoti
+  </a>
   <a href="{% url 'todolist_update' todolist.pk %}" class="btn btn-accent px-4 py-2">Redaguoti</a>
 
   <a href="{% url 'index' %}" class="btn btn-ghost px-4 py-2">Atšaukti</a>
@@ -164,10 +166,45 @@
 
 </form>
 
+<!-- Modal uzduociai prideti -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Prideti užduotį</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'todolist_item_create' todolist.pk  %}">
+          {% csrf_token %}
+              {% load crispy_forms_tags %}
+          {{ form | crispy }}
+          <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal-item-create">Išsaugoti</button>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+
+
+        <button type="button" class="btn btn-primary">Uždaryti</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
+
+  const myModal = document.getElementById('myModal')
+const myInput = document.getElementById('myInput')
+
+myModal.addEventListener('shown.bs.modal', () => {
+  myInput.focus()
+})
+
+
 /* ── Priority toggle ── */
 function setPriority(val, btn) {
   document.getElementById('priority-hidden').value = val;
