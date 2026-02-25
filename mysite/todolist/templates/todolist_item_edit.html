@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Redaguoti užduotį · todo.{% endblock %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+
+
+      <!-- Edit Card -->
+      <div class="card" style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius)">
+        <div class="card-header" style="border-bottom:1px solid var(--border);padding:1.5rem">
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin:0">
+            <i class="bi bi-pencil me-2" style="color:var(--accent)"></i>Redaguoti užduotį
+          </h3>
+        </div>
+
+        <form method="post" class="card-body" style="padding:2rem">
+          {% csrf_token %}
+
+          {{ form | crispy }}
+
+          <!-- Action Buttons -->
+          <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-accent px-4">
+              <i class="bi bi-floppy me-1"></i>Išsaugoti
+            </button>
+            <a href="{% url 'todolist' todolist.pk %}" class="btn btn-ghost px-4">
+              <i class="bi bi-arrow-left me-1"></i>Grįžti
+            </a>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock%}

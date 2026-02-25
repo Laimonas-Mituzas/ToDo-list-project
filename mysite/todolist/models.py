@@ -2,25 +2,26 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+from django.utils.translation import gettext_lazy as _
 
 class CustomUser(AbstractUser):
     avatar = models.ImageField(upload_to="profile_pics", null=True, blank=True)
 
 # Sarasu modelis
 class Todolist(models.Model):
-    title = models.CharField(verbose_name="Title",max_length=200)
+    title = models.CharField(verbose_name=_("Title"),max_length=200)
     description = models.TextField(max_length=2000, null=True, blank=True)
     completed = models.BooleanField(default=False)
     owner = models.ForeignKey(to="todolist.CustomUser",
-                              verbose_name="Savininkas",
+                              verbose_name=_("Owner"),
                               on_delete=models.SET_NULL,
                               null=True, blank=True)
-    created_at = models.DateField(verbose_name="Created", default=timezone.now)
-    deadline = models.DateField(verbose_name="Deadline", null=True, blank=True )
+    created_at = models.DateField(verbose_name=_("Created"), default=timezone.now)
+    deadline = models.DateField(verbose_name=_("Deadline"), null=True, blank=True )
 
     class Meta:
-        verbose_name = 'ToDo list'
-        verbose_name_plural = 'ToDo lists'
+        verbose_name = _("ToDo list"),
+        verbose_name_plural = _("ToDo lists")
 
     def total_items(self):
         return self.items.count()
@@ -38,13 +39,12 @@ class Todolist(models.Model):
 # Uzduociu modelis
 class TodolistItem(models.Model):
     todolist = models.ForeignKey(Todolist, on_delete=models.CASCADE, related_name='items')
-    title = models.CharField(verbose_name="Title", max_length=200)
-    # description = models.TextField(max_length=2000,null=True, blank=True)
-    completed = models.BooleanField(default=False)
+    title = models.CharField(verbose_name=_("Task"), max_length=200)
+    completed = models.BooleanField(verbose_name=_("Completed"),default=False)
 
     class Meta:
-        verbose_name = 'ToDo item'
-        verbose_name_plural = 'ToDo items'
+        verbose_name = _("ToDo item")
+        verbose_name_plural = _("ToDo items")
 
     def __str__(self):
         return self.title

@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from django.utils.translation import gettext_lazy as _
 from .my_settings import SECRET_KEY, DEBUG, ALLOWED_HOSTS
 
 
@@ -87,12 +88,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'lt'
+LANGUAGES = (
+    ('en-us', _('English')),
+    ('lt', _('Lithuanian')),
+)
 
 TIME_ZONE = "Europe/Vilnius"
 
 USE_I18N = True
-
 USE_TZ = False
 
 

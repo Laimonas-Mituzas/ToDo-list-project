@@ -20,6 +20,12 @@ class TodolistCreateUpdateForm(forms.ModelForm):
         fields = ['title', 'description', 'deadline']
         widgets = {'deadline': forms.DateInput(attrs={'type': 'date'})}
 
+
+class TodolistItemCreateUpdateForm(forms.ModelForm):
+    class Meta:
+        model = TodolistItem
+        fields = ['title', 'completed']
+
 class TodolistItemCreateForm(forms.ModelForm):
     class Meta:
         model = TodolistItem

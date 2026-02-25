@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}{% if todo %}{{ todo.title }}{% else %}Nauja užduotis{% endif %} · todo.{% endblock %}
+{% load i18n %}
+{% block title %}{% if todo %}{{ todo.title }}{% else %} {% trans "Task"%} {% endif %} · todo.{% endblock %}
 
 {% load static %}
 
@@ -62,20 +63,14 @@
             {% for item in todolist.items.all %}
 
             <div class="checklist-item{% if item.completed %} completed{% endif %}">
-              <form method="post" action="" class="d-inline item-toggle-form">
-                {% csrf_token %}
+              {% if item.completed %}
                 <input class="toggle-checkbox" type="checkbox" name="item_done_{{ item.pk }}"
-                       {% if item.completed %}checked{% endif %} />
-              </form>
-
-              <input type="text" name="item_title_{{ item.pk }}"
+                       checked />{% endif %}
+               <input type="text" name="item_title_{{ item.pk }}"
                      value="{{ item.title }}"
                      data-item-id="{{ item.pk }}"
                      class="form-control" readonly />
-              <a class="edit-sub"
-                      data-bs-toggle="modal"
-                      data-bs-target="#editItemModal"
-                      onclick="openEditItemModal({{ item.pk }}, '{{ item.title|escapejs }}')">
+              <a class="edit-sub" href="{% url 'todolist_item_edit' todolist.pk item.pk %}">
                 <i class="bi bi-pencil"></i>
               </a>
             </div>
@@ -86,7 +81,7 @@
             <p class="text-muted">Šiam sąrašui nėra užduočių.</p>
           {% endif %}
         </div>
-        <button type="button" class="btn btn-ghost btn-sm mt-2 " data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="addSubtask()">
+        <button type="button" class="btn btn-ghost btn-sm mt-2 prideti" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="addSubtask()">
           <i class="bi bi-plus me-1"></i>Pridėti
         </button>
       </div>
@@ -140,7 +135,7 @@
 
 <!-- ── Action bar ── -->
 <div class="action-bar">
-  <button id="save-todolist" type="button" class="btn btn-accent px-4 py-2">
+  <button id="save-todolist" type="button" class="btn btn-accent px-4 py-2" onclick="window.location.href='{% url 'index' %}'">
     <i class="bi bi-floppy me-1"></i>
     Išsaugoti
   </button>

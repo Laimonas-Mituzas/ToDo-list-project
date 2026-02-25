@@ -3,7 +3,8 @@ from django.views import generic
 from .models import Todolist, TodolistItem
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from .forms import UserChangeForm, CustomUserCreateForm, TodolistCreateUpdateForm, TodolistItemCreateForm
+from .forms import UserChangeForm, CustomUserCreateForm, TodolistItemCreateForm, TodolistCreateUpdateForm, TodolistItemCreateUpdateForm
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
@@ -73,59 +74,61 @@ class TodolistUpdateView(LoginRequiredMixin, generic.UpdateView):
 
 def TodolistItemCreateView(request, todolist_pk):
     if request.method == 'POST':
-        form = TodolistItemCreateForm(request.POST)
+        form = TodolistItemCreateUpdateForm(request.POST)
         if form.is_valid():
             todolist = Todolist.objects.get(id=todolist_pk)
             form.instance.todolist = todolist
             form.save()
             return redirect('todolist', pk=todolist_pk)
     else:
-        form = TodolistItemCreateForm()
+        form = TodolistItemCreateUpdateForm()
     return render(request, 'todolist.html', {'form': form})
 
-def TodolistItemUpdateView(request, todolist_pk, item_pk):
+
+
+# def TodolistItemUpdateView(request, todolist_pk):
+#     if request.method == 'POST':
+#         item_id = request.POST.get('item_id')
+#         try:
+#             item = TodolistItem.objects.select_related('todolist').get(pk=item_id, todolist__pk=todolist_pk)
+#         except TodolistItem.DoesNotExist:
+#             return redirect('todolist', pk=todolist_pk)
+#
+#         form = TodolistItemUpdateForm(request.POST, instance=item)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('todolist', pk=todolist_pk)
+#     else:
+#         item_id = request.GET.get('item_id')
+#         try:
+#             item = TodolistItem.objects.select_related('todolist').get(pk=item_id, todolist__pk=todolist_pk)
+#         except TodolistItem.DoesNotExist:
+#             return redirect('todolist', pk=todolist_pk)
+#
+#         form = TodolistItemUpdateForm(instance=item)
+#     return render(request, 'todolist.html', {'form': form, 'item': item})
+
+
+@login_required
+def TodolistItemEditView(request, todolist_pk, item_pk):
     try:
         item = TodolistItem.objects.select_related('todolist').get(pk=item_pk, todolist__pk=todolist_pk)
     except TodolistItem.DoesNotExist:
         return redirect('todolist', pk=todolist_pk)
 
+    # Ensure the current user owns the todolist (safety check)
+    if item.todolist.owner != request.user:
+        return redirect('todolist', pk=todolist_pk)
+
     if request.method == 'POST':
-        form = TodolistItemUpdateForm(request.POST, instance=item)
+        form = TodolistItemCreateUpdateForm(request.POST, instance=item)
         if form.is_valid():
             form.save()
             return redirect('todolist', pk=todolist_pk)
     else:
-        form = TodolistItemCreateForm(instance=item)
+        form = TodolistItemCreateUpdateForm(instance=item)
 
-    return render(request, 'todolist.html', {'form': form, 'item': item})
-
-
-# from django.contrib.auth.decorators import login_required
-#
-# @login_required
-# def TodolistItemToggleView(request, todolist_pk, item_pk):
-#     """Toggle or set `completed` on a TodolistItem based on submitted form data.
-#     Accepts POST only and redirects back to the todolist detail.
-#     """
-#     if request.method != 'POST':
-#         return redirect('todolist', pk=todolist_pk)
-#
-#     try:
-#         item = TodolistItem.objects.select_related('todolist').get(pk=item_pk, todolist__pk=todolist_pk)
-#     except TodolistItem.DoesNotExist:
-#         return redirect('todolist', pk=todolist_pk)
-#
-#     # Ensure the current user owns the todolist (safety check)
-#     if item.todolist.owner != request.user:
-#         return redirect('todolist', pk=todolist_pk)
-#
-#     # Determine checkbox field name for this item and set completed accordingly.
-#     checkbox_name = f'item_done_{item.pk}'
-#     # If the POST contains the checkbox field, it means checked -> True; otherwise False.
-#     item.completed = checkbox_name in request.POST
-#     item.save()
-#
-#     return redirect('todolist', pk=todolist_pk)
+    return render(request, 'todolist_item_edit.html', {'form': form, 'todolist': item.todolist})
 
 
 class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
@@ -135,6 +138,7 @@ class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
 
 class SignUpView(generic.CreateView):
     form_class = CustomUserCreateForm

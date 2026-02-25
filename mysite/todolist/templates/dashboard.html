@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static %}
 {% block title %}Skydelis · todo.{% endblock %}
 {% block nav_dashboard %}active{% endblock %}
@@ -14,11 +15,11 @@
       <i class="bi bi-calendar3 me-1"></i>
       {% now "Y F jS H:i" %}
     </p>
-    <h1>Labas, {{ user.first_name|default:user.username }} 👋</h1>
+    <h1>{% trans 'Hello,' %} {{ user.first_name|default:user.username }} 👋</h1>
   </div>
   {% if todolist is not defined %}
   <a href="{% url 'todolist_create' %}" class="btn btn-accent px-4">
-    <i class="bi bi-plus-lg me-1"></i>Naujas sąrašas
+    <i class="bi bi-plus-lg me-1 new-list"></i> {% trans 'New Todo list' %}
   </a>
     {% endif %}
 </div>
@@ -36,10 +37,10 @@
     <div class="list-card-content">
       <div class="list-name" style="{% if todolist.is_completed %}color:var(--text-muted){%endif%}">{{ todolist.title }}</div>
       <div class="list-meta">
-        <span class="list-count">Viso užduočių: {{ todolist.items.count }} </span>
+        <span class="list-count">{% trans 'Total tasks:' %} {{ todolist.items.count }} </span>
         {% if lst.done_count %}
           <span class="list-done-count">
-            <i class="bi bi-check2 me-1"></i>{{ lst.done_count }} atlikta
+            <i class="bi bi-check2 me-1"></i>{{ lst.done_count }} {% trans 'done' %}
           </span>
         {% endif %}
       </div>
@@ -51,7 +52,7 @@
       <hr>
       <div class="list-desc">{{ todolist.description }}</div>
       {% if todolist.deadline %}
-      <p class="{% if todolist.is_overpassed %}alert-danger{% endif %}"> Atlikti iki {{ todolist.deadline|date:"Y-m-d" }}
+      <p class="{% if todolist.is_overpassed %}alert-danger{% endif %}"> {% trans 'Due' %} {{ todolist.deadline|date:"Y-m-d" }}
       {% endif %}
       {% if todolist.is_completed %}
       <div class="todolist-check">  <i class="bi bi-check-circle"></i>
@@ -64,14 +65,14 @@
 
   <a href="{% url 'todolist_create' %}" class="list-card-new text-decoration-none">
     <i class="bi bi-plus-lg"></i>
-    <span>Naujas sąrašas</span>
+    <span class="new-list">{% trans 'New Todo list' %}</span>
   </a>
 </div>
 
 
 
 {% else %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'login'%}">Prisijungti</a></li>
+  <li class="nav-item"><a class="nav-link" href="{% url 'login'%}">{% trans 'Login' %}</a></li>
 {% endif %}
 
 {% endblock %}
