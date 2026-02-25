@@ -85,30 +85,6 @@ def TodolistItemCreateView(request, todolist_pk):
     return render(request, 'todolist.html', {'form': form})
 
 
-
-# def TodolistItemUpdateView(request, todolist_pk):
-#     if request.method == 'POST':
-#         item_id = request.POST.get('item_id')
-#         try:
-#             item = TodolistItem.objects.select_related('todolist').get(pk=item_id, todolist__pk=todolist_pk)
-#         except TodolistItem.DoesNotExist:
-#             return redirect('todolist', pk=todolist_pk)
-#
-#         form = TodolistItemUpdateForm(request.POST, instance=item)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('todolist', pk=todolist_pk)
-#     else:
-#         item_id = request.GET.get('item_id')
-#         try:
-#             item = TodolistItem.objects.select_related('todolist').get(pk=item_id, todolist__pk=todolist_pk)
-#         except TodolistItem.DoesNotExist:
-#             return redirect('todolist', pk=todolist_pk)
-#
-#         form = TodolistItemUpdateForm(instance=item)
-#     return render(request, 'todolist.html', {'form': form, 'item': item})
-
-
 @login_required
 def TodolistItemEditView(request, todolist_pk, item_pk):
     try:
@@ -128,7 +104,7 @@ def TodolistItemEditView(request, todolist_pk, item_pk):
     else:
         form = TodolistItemCreateUpdateForm(instance=item)
 
-    return render(request, 'todolist_item_edit.html', {'form': form, 'todolist': item.todolist})
+    return render(request, 'todolist_item_edit.html', {'form': form, 'todolist': item.todolist, 'item': item})
 
 
 class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
@@ -144,3 +120,23 @@ class SignUpView(generic.CreateView):
     form_class = CustomUserCreateForm
     template_name = "signup.html"
     success_url = reverse_lazy("login")
+
+
+@login_required
+def TodolistItemDeleteView(request, todolist_pk, item_pk):
+    """Delete a TodolistItem (POST only). Redirects back to the todolist detail."""
+    try:
+        item = TodolistItem.objects.select_related('todolist').get(pk=item_pk, todolist__pk=todolist_pk)
+    except TodolistItem.DoesNotExist:
+        return redirect('todolist', pk=todolist_pk)
+
+    # Ensure the current user owns the todolist (safety check)
+    if item.todolist.owner != request.user:
+        return redirect('todolist', pk=todolist_pk)
+
+    if request.method == 'POST':
+        item.delete()
+        return redirect('todolist', pk=todolist_pk)
+
+    # If not POST, redirect back (safety)
+    return redirect('todolist', pk=todolist_pk)

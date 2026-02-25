@@ -122,7 +122,11 @@
     {% if todolist %}
     <div class="meta-card">
       <div class="meta-row">
-        <span class="meta-label"><i class="bi bi-info-circle"></i>Sukurta</span>
+        <a class="meta-label list-title" href="{% url 'index' %}"> <-  {% trans 'Back to dash' %}</a>
+
+      </div>
+      <div class="meta-row">
+        <span class="meta-label"><i class="bi bi-info-circle"></i>{% trans 'Created' %}</span>
         <span class="meta-value" style="font-size:.8rem;color:var(--text-muted)">
           {{ todolist.created_at|date:"Y-m-d" }}
         </span>
@@ -137,14 +141,14 @@
 <div class="action-bar">
   <button id="save-todolist" type="button" class="btn btn-accent px-4 py-2" onclick="window.location.href='{% url 'index' %}'">
     <i class="bi bi-floppy me-1"></i>
-    Išsaugoti
+    {% trans 'Save' %}
   </button>
-  <a href="{% url 'todolist_update' todolist.pk %}" class="btn btn-accent px-4 py-2">Redaguoti</a>
+  <a href="{% url 'todolist_update' todolist.pk %}" class="btn btn-accent px-4 py-2">{% trans 'Edit' %}</a>
 
-  <a href="{% url 'index' %}" class="btn btn-ghost px-4 py-2">Atšaukti</a>
+  <a href="{% url 'index' %}" class="btn btn-ghost px-4 py-2">{% trans 'Cancel' %}</a>
 
   <a href="{% url 'todolist_delete' todolist.pk %}" class="btn btn-ghost px-3 py-2" style="color:var(--danger-soft)">
-          <i class="bi bi-trash me-1"></i>Ištrinti
+          <i class="bi bi-trash me-1"></i>{% trans 'Delete' %}
         </a>
 
   {% if todo %}
@@ -165,7 +169,7 @@
             onsubmit="return confirm('Tikrai ištrinti šią užduotį?')">
         {% csrf_token %}
         <button type="submit" class="btn btn-ghost px-3 py-2" style="color:var(--danger-soft)">
-          <i class="bi bi-trash me-1"></i>Ištrinti
+          <i class="bi bi-trash me-1"></i>{% trans 'Delete'%}
         </button>
       </form>
     </div>

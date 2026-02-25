@@ -9,9 +9,9 @@ class CustomUser(AbstractUser):
 
 # Sarasu modelis
 class Todolist(models.Model):
-    title = models.CharField(verbose_name=_("Title"),max_length=200)
-    description = models.TextField(max_length=2000, null=True, blank=True)
-    completed = models.BooleanField(default=False)
+    title = models.CharField(verbose_name=_("Title"), max_length=200)
+    description = models.TextField(verbose_name=_("Description"), max_length=2000, null=True, blank=True)
+    completed = models.BooleanField(verbose_name=_("Completed"), default=False)
     owner = models.ForeignKey(to="todolist.CustomUser",
                               verbose_name=_("Owner"),
                               on_delete=models.SET_NULL,
@@ -38,7 +38,7 @@ class Todolist(models.Model):
 
 # Uzduociu modelis
 class TodolistItem(models.Model):
-    todolist = models.ForeignKey(Todolist, on_delete=models.CASCADE, related_name='items')
+    todolist = models.ForeignKey(Todolist, verbose_name=_("Todo list"), on_delete=models.CASCADE, related_name='items')
     title = models.CharField(verbose_name=_("Task"), max_length=200)
     completed = models.BooleanField(verbose_name=_("Completed"),default=False)
 

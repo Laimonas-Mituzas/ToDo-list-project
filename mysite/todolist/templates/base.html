@@ -12,7 +12,7 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
   <!-- Todolist stiliai -->
-  {% load static %}
+  {% load static %}{% load i18n %}
   <link href="{% static 'css/todolist.css' %}" rel="stylesheet" />
 </head>
 <body>
@@ -32,7 +32,7 @@
           {% if user.is_authenticated %}
             <li class="nav-item">
               <a class="nav-link {% block nav_dashboard %}{% endblock %}" href="{% url 'index' %}">
-                <i class="bi bi-grid me-1"></i>Skydelis
+                <i class="bi bi-grid me-1"></i>{% trans 'Dashboard' %}
               </a>
             </li>
             <li class="nav-item">
@@ -43,20 +43,40 @@
                 {{ user.get_username }}
               </a>
             </li>
+
+          <li class="nav-item">
+    {% load i18n %}
+    <form action="{% url 'set_language' %}" method="post" class="d-flex">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ redirect_to }}"/>
+        <select name="language" class="form-control me-2" onchange="this.form.submit()">
+            {% load static %}
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% for lang in LANGUAGES %}
+            <option value="{{ lang.0 }}"
+                    {% if lang.0 == LANGUAGE_CODE %}selected="selected" {% endif %}>
+                {{ lang.1 }}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+</li>
+
             <li class="nav-item ms-2">
               <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-ghost btn-sm px-3">
-                  <i class="bi bi-box-arrow-right me-1"></i>Atsijungti
+                  <i class="bi bi-box-arrow-right me-1"></i>{% trans 'Log out' %}
                 </button>
               </form>
             </li>
           {% else %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'login'%}">Prisijungti</a>
+              <a class="nav-link" href="{% url 'login'%}">{% trans 'Log in' %}</a>
             </li>
             <li class="nav-item">
-              <a class="btn btn-accent btn-sm px-3" href="">Registruotis</a>
+              <a class="btn btn-accent btn-sm px-3" href="">{% trans 'Register' %}</a>
             </li>
           {% endif %}
         </ul>
@@ -64,81 +84,32 @@
     </div>
   </nav>
 
-  <!-- ── Flash messages ── -->
-  {% if messages %}
-    <div class="position-fixed top-0 end-0 p-3" style="z-index:1090;margin-top:70px">
-      {% for msg in messages %}
-        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show shadow" role="alert">
-          {{ msg }}
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
 
   <!-- ── Page body ── -->
   <div class="app-wrapper">
     <!-- Sidebar (shown only when authenticated) -->
     {% if user.is_authenticated %}
     <aside class="sidebar d-none d-lg-block">
-      <p class="sidebar-section-title">Rodiniai</p>
+      <p class="sidebar-section-title">{% trans 'Status' %}</p>
       <a href="" class="sidebar-link {% block sb_all %}{% endblock %}">
-        <i class="bi bi-list-ul"></i> Visi
+        <i class="bi bi-list-ul"></i> {% trans 'All tasks' %}
         <span class="sidebar-badge">{{ TodoList.total_items|default:'0' }}</span>
       </a>
       <a href="" class="sidebar-link {% block sb_today %}{% endblock %}">
-        <i class="bi bi-sun"></i> Šiandien
+        <i class="bi bi-sun"></i> {% trans 'Waiting' %}
         <span class="sidebar-badge">{{ todo_counts.today|default:'0' }}</span>
       </a>
       <a href="" class="sidebar-link {% block sb_upcoming %}{% endblock %}">
-        <i class="bi bi-calendar3"></i> Artimiausi
+        <i class="bi bi-calendar3"></i> {% trans 'Passed term' %}
         <span class="sidebar-badge">{{ todo_counts.upcoming|default:'0' }}</span>
       </a>
       <a href="" class="sidebar-link {% block sb_done %}{% endblock %}">
-        <i class="bi bi-check-circle"></i> Atlikti
+        <i class="bi bi-check-circle"></i> {% trans 'Done tasks' %}
         <span class="sidebar-badge">{{ todo_counts.done|default:'0' }}</span>
       </a>
 
-      <p class="sidebar-section-title">Prioritetas</p>
-      <a href="" class="sidebar-link">
-        <i class="bi bi-arrow-up-circle" style="color:var(--danger-soft)"></i> Aukštas
-      </a>
-      <a href="" class="sidebar-link">
-        <i class="bi bi-dash-circle" style="color:var(--warning-soft)"></i> Vidutinis
-      </a>
-      <a href="" class="sidebar-link">
-        <i class="bi bi-arrow-down-circle" style="color:var(--accent)"></i> Žemas
-      </a>
 
-      <p class="sidebar-section-title">
-        Sąrašai
-        <a href="#url_lists" class="sidebar-manage-link" title="Valdyti sąrašus">
-          <i class="bi bi-gear"></i>
-        </a>
-      </p>
-      {% for lst in user_lists %}
-        <a href="{% url 'todos_list' lst.pk %}" class="sidebar-link {% if active_list_id == lst.pk %}active{% endif %}">
-          <i class="{{ lst.icon|default:'bi-collection' }}" style="color:{{ lst.color|default:'var(--text-muted)' }}"></i>
-          {{ lst.name }}
-          <span class="sidebar-badge">{{ lst.todo_count }}</span>
-        </a>
-      {% empty %}
-        <a href="#url_lists" class="sidebar-link" style="font-style:italic;font-size:.8rem">
-          <i class="bi bi-plus-circle"></i> Sukurti sąrašą
-        </a>
-      {% endfor %}
 
-      <p class="sidebar-section-title">Etiketės</p>
-      {% for tag in user_tags %}
-        <a href="" class="sidebar-link">
-          <i class="bi bi-tag" style="color:{{ tag.color }}"></i> {{ tag.name }}
-          <span class="sidebar-badge">{{ tag.todo_count }}</span>
-        </a>
-      {% empty %}
-        <span class="sidebar-link" style="pointer-events:none;font-style:italic;font-size:.8rem">
-          Nėra etiketių
-        </span>
-      {% endfor %}
     </aside>
 
     {% else %}

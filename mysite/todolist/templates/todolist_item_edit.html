@@ -12,7 +12,6 @@
   <div class="row">
     <div class="col-md-8 mx-auto">
 
-
       <!-- Edit Card -->
       <div class="card" style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius)">
         <div class="card-header" style="border-bottom:1px solid var(--border);padding:1.5rem">
@@ -29,17 +28,32 @@
           <!-- Action Buttons -->
           <div class="d-flex gap-2 mt-4">
             <button type="submit" class="btn btn-accent px-4">
-              <i class="bi bi-floppy me-1"></i>Išsaugoti
+              <i class="bi bi-floppy me-1"></i>{% trans 'Save'%}
             </button>
-            <a href="{% url 'todolist' todolist.pk %}" class="btn btn-ghost px-4">
-              <i class="bi bi-arrow-left me-1"></i>Grįžti
+            <a href="{% url 'todolist' item.todolist.pk %}" class="btn btn-ghost px-4">
+              <i class="bi bi-arrow-left me-1"></i>{% trans 'Back' %}
             </a>
           </div>
         </form>
+      </div>
+
+      <!-- Delete Section (separate from edit form) -->
+      <div class="card mt-4" style="background:rgba(255, 77, 109, 0.05);border:1px solid rgba(255, 77, 109, 0.2);border-radius:var(--radius)">
+        <div class="card-body" style="padding:1.5rem">
+
+          <form method="post" action="{% url 'todolist_item_delete' item.todolist.pk item.pk %}" style="display:inline" onsubmit="return confirm('Tikrai ištrinti šią užduotį? Šio veiksmo negalima atšaukti.')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost px-4" style="color:var(--danger-soft);border-color:rgba(255, 77, 109, 0.3)">
+              <i class="bi bi-trash me-1"></i>{% trans 'Delete task' %}
+            </button>
+          </form>
+        </div>
       </div>
 
     </div>
   </div>
 </div>
 
+
 {% endblock%}
+
