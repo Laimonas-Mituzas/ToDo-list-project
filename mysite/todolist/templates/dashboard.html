@@ -72,7 +72,72 @@
 
 
 {% else %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'login'%}">{% trans 'Login' %}</a></li>
+  <div class="hero-section">
+
+  <!-- Antraštė -->
+  <div class="hero-header">
+    <h1 class="hero-title">todo<span>.</span></h1>
+    <p class="hero-subtitle">{% trans 'Your personal task manager' %}</p>
+  </div>
+
+  <!-- Privalumai -->
+  <div class="hero-features">
+
+    <div class="hero-feature">
+      <div class="hero-feature-icon">
+        <i class="bi bi-collection"></i>
+      </div>
+      <div>
+        <div class="hero-feature-title">{% trans 'Multiple lists' %}</div>
+        <div class="hero-feature-desc">{% trans 'Organize your tasks into separate lists — work, personal, projects.' %}</div>
+      </div>
+    </div>
+
+    <div class="hero-feature">
+      <div class="hero-feature-icon">
+        <i class="bi bi-check2-circle"></i>
+      </div>
+      <div>
+        <div class="hero-feature-title">{% trans 'Track progress' %}</div>
+        <div class="hero-feature-desc">{% trans 'Mark tasks as done and watch your progress bar fill up.' %}</div>
+      </div>
+    </div>
+
+    <div class="hero-feature">
+      <div class="hero-feature-icon">
+        <i class="bi bi-calendar-event"></i>
+      </div>
+      <div>
+        <div class="hero-feature-title">{% trans 'Deadlines & reminders' %}</div>
+        <div class="hero-feature-desc">{% trans 'Set due dates and always know what needs attention today.' %}</div>
+      </div>
+    </div>
+
+    <div class="hero-feature">
+      <div class="hero-feature-icon">
+        <i class="bi bi-exclamation-circle"></i>
+      </div>
+      <div>
+        <div class="hero-feature-title">{% trans 'Overdue alerts' %}</div>
+        <div class="hero-feature-desc">{% trans 'Instantly see which tasks and lists have passed their deadline.' %}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA mygtukai -->
+  <div class="hero-cta">
+    <a href="{% url 'signup' %}" class="btn btn-accent px-5 py-2">
+      <i class="bi bi-person-plus me-2"></i>{% trans 'Create account' %}
+    </a>
+    <a href="{% url 'login' %}" class="btn btn-ghost px-5 py-2">
+      <i class="bi bi-box-arrow-in-right me-2"></i>{% trans 'Log in' %}
+    </a>
+  </div>
+
+  <p class="hero-note">{% trans 'Free to use. No credit card required.' %}</p>
+
+</div>
 {% endif %}
 
 {% endblock %}

@@ -64,13 +64,11 @@
     </form>
 </li>
 
-            <li class="nav-item ms-2">
-              <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-ghost btn-sm px-3">
-                  <i class="bi bi-box-arrow-right me-1"></i>{% trans 'Log out' %}
-                </button>
-              </form>
+            <li class="nav-item">
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="nav-link" type="submit">{% trans 'Log out' %}</button>
+                </form>
             </li>
           {% else %}
             <li class="nav-item">
@@ -92,7 +90,7 @@
     {% if user.is_authenticated %}
     <aside class="sidebar d-none d-lg-block">
       <p class="sidebar-section-title">{% trans 'Status' %}</p>
-      <a href="" class="sidebar-link ">
+      <a href="{% url 'index' %}" class="sidebar-link ">
         <i class="bi bi-list-ul"></i> {% trans 'All tasks' %}
         <span class="sidebar-badge">{{ todolist_items_count|default:'0' }}</span>
       </a>
@@ -100,7 +98,7 @@
         <i class="bi bi-sun"></i> {% trans 'Waiting' %}
         <span class="sidebar-badge">{{  todolist_items_not_completed|default:'0' }}</span>
       </a>
-      <a href="" class="sidebar-link
+      <a href="{% url 'overdue_items' %}" class="sidebar-link
       {% if todolist_items_overdue%}alert alert-danger{% endif %}">
         <i class="bi bi-calendar3"></i> {% trans 'Passed term' %}
         <span class="sidebar-badge">{{ todolist_items_overdue|default:'0' }}</span>

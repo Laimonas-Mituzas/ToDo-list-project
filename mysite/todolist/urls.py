@@ -13,5 +13,6 @@ urlpatterns = [
     path('todolist/<int:todolist_pk>/item/<int:item_pk>/delete', views.TodolistItemDeleteView, name='todolist_item_delete'),
     path('profile/', views.ProfileUpdateView.as_view(), name='profile'),
     path('signup/', views.SignUpView.as_view(), name='signup'),
- ]
-
+    path('overdue/items/', views.OverdueItemsView.as_view(), name='overdue_items'),
+    path('overdue/lists/', views.OverdueListsView.as_view(), name='overdue_lists'),
+]

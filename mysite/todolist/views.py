@@ -9,30 +9,11 @@ from django.utils import timezone
 from django.db.models import Q
 
 
-def get_user_stats(user):
-    """Grąžina vartotojo užduočių statistiką"""
-    if not user.is_authenticated:
-        return {}
-
-    return {
-        'todolist_items_count': TodolistItem.objects.filter(todolist__owner=user).count(),
-        'todolist_items_completed': TodolistItem.objects.filter(todolist__owner=user, completed=True).count(),
-        'todolist_items_not_completed': TodolistItem.objects.filter(todolist__owner=user, completed=False).count(),
-        'todolists_overdue': Todolist.objects.filter(
-            owner=user,
-            deadline__lt=timezone.now().date(),
-            completed=False
-        ).count(),
-        'todolist_items_overdue': TodolistItem.objects.filter(
-            todolist__owner=user,
-            todolist__deadline__lt=timezone.now().date(),
-            completed=False
-        ).count(),
-    }
-
-
 def index(request):
-    todolists = Todolist.objects.filter(owner=request.user)
+    if request.user.is_authenticated:
+        todolists = Todolist.objects.filter(owner=request.user)
+    else:
+        todolists = Todolist.objects.none()
     todolists_counts = Todolist.objects.all().count()
     todolist_items = TodolistItem.objects.all()
     num_visits = request.session.get('num_visits', 1)
@@ -40,7 +21,7 @@ def index(request):
 
     context = {
         'num_visits': num_visits,
-        'todolists': todolists,
+        'todolists': todolists ,
         'todolists_counts': todolists_counts,
         'todolist_items': todolist_items,
     }
@@ -195,7 +176,65 @@ class SignUpView(generic.CreateView):
     template_name = "signup.html"
     success_url = reverse_lazy("login")
 
-# class RegisterView(generic.CreateView):
-#     form_class = CustomUserCreateForm
-#     template_name = "signup.html"
-#     success_url = reverse_lazy("login")
+
+def get_user_stats(user):
+    """Grąžina vartotojo užduočių statistiką"""
+    if not user.is_authenticated:
+        return {}
+
+    return {
+        'todolist_items_count': TodolistItem.objects.filter(todolist__owner=user).count(),
+        'todolist_items_completed': TodolistItem.objects.filter(todolist__owner=user, completed=True).count(),
+        'todolist_items_not_completed': TodolistItem.objects.filter(todolist__owner=user, completed=False).count(),
+        'todolists_overdue': Todolist.objects.filter(
+            owner=user,
+            deadline__lt=timezone.now().date(),
+            completed=False
+        ).count(),
+        'todolist_items_overdue': TodolistItem.objects.filter(
+            todolist__owner=user,
+            todolist__deadline__lt=timezone.now().date(),
+            completed=False
+        ).count(),
+    }
+
+
+
+class OverdueItemsView(LoginRequiredMixin, generic.ListView):
+    """Rodo visus praterminuotus (overdue) TodolistItem, priklausančius prisijungusiam vartotojui"""
+    model = TodolistItem
+    template_name = 'overdue_items.html'
+    context_object_name = 'items'
+    paginate_by = 25
+
+    def get_queryset(self):
+        return TodolistItem.objects.filter(
+            todolist__owner=self.request.user,
+            todolist__deadline__lt=timezone.now().date(),
+            completed=False
+        ).select_related('todolist')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(get_user_stats(self.request.user))
+        return context
+
+
+class OverdueListsView(LoginRequiredMixin, generic.ListView):
+    """Rodo visus praterminuotus Todolist (sąrašus) priklausančius prisijungusiam vartotojui"""
+    model = Todolist
+    template_name = 'overdue_lists.html'
+    context_object_name = 'lists'
+    paginate_by = 25
+
+    def get_queryset(self):
+        return Todolist.objects.filter(
+            owner=self.request.user,
+            deadline__lt=timezone.now().date(),
+            completed=False
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(get_user_stats(self.request.user))
+        return context

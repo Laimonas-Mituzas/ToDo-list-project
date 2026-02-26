@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 08:53+0200\n"
-"PO-Revision-Date: 2026-02-26 08:54+0200\n"
+"POT-Creation-Date: 2026-02-26 12:32+0200\n"
+"PO-Revision-Date: 2026-02-26 13:01+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: lt\n"
@@ -36,11 +36,11 @@ msgstr "Atlikta"
 msgid "Owner"
 msgstr "Savininkas"
 
-#: .\models.py:33 .\templates\todolist.html:129
+#: .\models.py:33 .\templates\todolist.html:130
 msgid "Created"
 msgstr "Sukurta"
 
-#: .\models.py:34
+#: .\models.py:34 .\templates\overdue_lists.html:34
 msgid "Deadline"
 msgstr "Terminas"
 
@@ -78,27 +78,27 @@ msgstr "Skydelis"
 msgid "Log out"
 msgstr "Atsijungti"
 
-#: .\templates\base.html:76
+#: .\templates\base.html:75 .\templates\dashboard.html:134
 msgid "Log in"
 msgstr "Prisijungti"
 
-#: .\templates\base.html:79
+#: .\templates\base.html:78 .\templates\signup.html:10
 msgid "Register"
 msgstr "Registruotis"
 
-#: .\templates\base.html:93
+#: .\templates\base.html:92
 msgid "Status"
 msgstr "Būsena"
 
-#: .\templates\base.html:95
+#: .\templates\base.html:94
 msgid "All tasks"
 msgstr "Visos užduotys"
 
-#: .\templates\base.html:99
+#: .\templates\base.html:98
 msgid "Waiting"
 msgstr "Laukia"
 
-#: .\templates\base.html:103
+#: .\templates\base.html:103 .\templates\todolist.html:40
 msgid "Passed term"
 msgstr "Pražioplinta"
 
@@ -122,51 +122,135 @@ msgstr "Viso užduočių:"
 msgid "done"
 msgstr "atlikta"
 
-#: .\templates\dashboard.html:55
+#: .\templates\dashboard.html:55 .\templates\todolist.html:40
 msgid "Due"
 msgstr "Atlikti iki"
 
-#: .\templates\dashboard.html:75
-msgid "Login"
-msgstr "Prisijungti"
+#: .\templates\dashboard.html:80
+msgid "Your personal task manager"
+msgstr "Jūsų asmeninė užduočių tvarkyklė"
 
-#: .\templates\profile.html:11
-msgid "Username:"
-msgstr "Naudotoja vardas:"
+#: .\templates\dashboard.html:91
+msgid "Multiple lists"
+msgstr "Nelimituoti sąrašai"
 
-#: .\templates\profile.html:12
-msgid "First name:"
-msgstr "Vardas:"
+#: .\templates\dashboard.html:92
+msgid "Organize your tasks into separate lists — work, personal, projects."
+msgstr ""
+"Suskirstykite užduotis į atskirus sąrašus – darbinį, asmeninį, projektų."
 
-#: .\templates\profile.html:13
-msgid "Last name:"
-msgstr "Pavardė:"
+#: .\templates\dashboard.html:101
+msgid "Track progress"
+msgstr "Sek pažangą"
 
-#: .\templates\profile.html:14
-msgid "Email:"
-msgstr "E-paštas:"
+#: .\templates\dashboard.html:102
+msgid "Mark tasks as done and watch your progress bar fill up."
+msgstr ""
+"Pažymėkite užduotis kaip atliktas ir stebėkite, kaip pildosi jūsų "
+"pažangos juosta."
 
-#: .\templates\profile.html:15
-msgid "Profile"
-msgstr "Profilis"
+#: .\templates\dashboard.html:111
+msgid "Deadlines & reminders"
+msgstr "Terminai ir priminimai"
 
-#: .\templates\todolist.html:125
-msgid "Back to dash"
-msgstr "Į skydelį"
+#: .\templates\dashboard.html:112
+msgid "Set due dates and always know what needs attention today."
+msgstr ""
+"Nustatykite terminus ir visada žinokite, kam šiandien reikia skirti "
+"dėmesį."
 
-#: .\templates\todolist.html:144 .\templates\todolist_item_edit.html:31
-msgid "Save"
-msgstr "Išsaugoti"
+#: .\templates\dashboard.html:121
+msgid "Overdue alerts"
+msgstr "Įspėjimai"
 
-#: .\templates\todolist.html:146
+#: .\templates\dashboard.html:122
+msgid "Instantly see which tasks and lists have passed their deadline."
+msgstr "Iš karto matykite, kurios užduotys ir sąrašai yra praleidę terminą."
+
+#: .\templates\dashboard.html:131
+msgid "Create account"
+msgstr "Sukurti paskyrą"
+
+#: .\templates\dashboard.html:138
+msgid "Free to use. No credit card required."
+msgstr "Naudojimas nemokamas"
+
+#: .\templates\overdue_items.html:4 .\templates\overdue_items.html:11
+msgid "Overdue items"
+msgstr "Pražioplintos užduotys"
+
+#: .\templates\overdue_items.html:35
+msgid "Open list"
+msgstr "Atidaryti sąrašą"
+
+#: .\templates\overdue_items.html:75
+msgid "No overdue tasks"
+msgstr "Nėra pražioplinimų"
+
+#: .\templates\overdue_items.html:77
+msgid "Tasks that passed their deadline and are not completed"
+msgstr "Užduotys, kurių terminas pasibaigęs ir kurios nėra įvykdytos"
+
+#: .\templates\overdue_lists.html:4 .\templates\overdue_lists.html:13
+#: .\templates\overdue_lists.html:15
+msgid "Overdue lists"
+msgstr ""
+
+#: .\templates\overdue_lists.html:30
+msgid "Overdue"
+msgstr ""
+
+#: .\templates\overdue_lists.html:44
+msgid "Open"
+msgstr ""
+
+#: .\templates\overdue_lists.html:47 .\templates\todolist.html:147
 msgid "Edit"
 msgstr "Keisti"
 
-#: .\templates\todolist.html:148
+#: .\templates\overdue_lists.html:86
+msgid "No overdue lists"
+msgstr "Nera pražioplinimų"
+
+#: .\templates\overdue_lists.html:87
+msgid "Lists where deadline passed and list is not marked completed"
+msgstr ""
+"Sąrašai, kurių terminas pasibaigęs ir sąrašas nėra pažymėtas kaip "
+"užbaigtas"
+
+#: .\templates\profile.html:18
+msgid "Username:"
+msgstr "Naudotoja vardas:"
+
+#: .\templates\profile.html:19
+msgid "First name:"
+msgstr "Vardas:"
+
+#: .\templates\profile.html:20
+msgid "Last name:"
+msgstr "Pavardė:"
+
+#: .\templates\profile.html:21
+msgid "Email:"
+msgstr "E-paštas:"
+
+#: .\templates\profile.html:27
+msgid "Profile"
+msgstr "Profilis"
+
+#: .\templates\todolist.html:126
+msgid "Back to dash"
+msgstr "Į skydelį"
+
+#: .\templates\todolist.html:145 .\templates\todolist_item_edit.html:31
+msgid "Save"
+msgstr "Išsaugoti"
+
+#: .\templates\todolist.html:149
 msgid "Cancel"
 msgstr "Atšaukti"
 
-#: .\templates\todolist.html:151 .\templates\todolist.html:172
+#: .\templates\todolist.html:152 .\templates\todolist.html:173
 #: .\templates\todolist_item_edit-back.html:38
 msgid "Delete"
 msgstr "Pašalinti"
@@ -178,3 +262,6 @@ msgstr "Atgal"
 #: .\templates\todolist_item_edit.html:47
 msgid "Delete task"
 msgstr "Trinti užduotį"
+
+#~ msgid "Login"
+#~ msgstr "Prisijungti"
