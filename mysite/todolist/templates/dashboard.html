@@ -52,7 +52,7 @@
       <hr>
       <div class="list-desc">{{ todolist.description }}</div>
       {% if todolist.deadline %}
-      <p class="{% if todolist.is_overpassed %}alert-danger{% endif %}"> {% trans 'Due' %} {{ todolist.deadline|date:"Y-m-d" }}
+      <p class="list-date {% if todolist.is_overpassed %}danger{% endif %}"> {% trans 'Due' %} {{ todolist.deadline|date:"Y-m-d" }}
       {% endif %}
       {% if todolist.is_completed %}
       <div class="todolist-check">  <i class="bi bi-check-circle"></i>

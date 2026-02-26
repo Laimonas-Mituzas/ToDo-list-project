@@ -92,21 +92,22 @@
     {% if user.is_authenticated %}
     <aside class="sidebar d-none d-lg-block">
       <p class="sidebar-section-title">{% trans 'Status' %}</p>
-      <a href="" class="sidebar-link {% block sb_all %}{% endblock %}">
+      <a href="" class="sidebar-link ">
         <i class="bi bi-list-ul"></i> {% trans 'All tasks' %}
-        <span class="sidebar-badge">{{ TodoList.total_items|default:'0' }}</span>
+        <span class="sidebar-badge">{{ todolist_items_count|default:'0' }}</span>
       </a>
-      <a href="" class="sidebar-link {% block sb_today %}{% endblock %}">
+      <a href="" class="sidebar-link ">
         <i class="bi bi-sun"></i> {% trans 'Waiting' %}
-        <span class="sidebar-badge">{{ todo_counts.today|default:'0' }}</span>
+        <span class="sidebar-badge">{{  todolist_items_not_completed|default:'0' }}</span>
       </a>
-      <a href="" class="sidebar-link {% block sb_upcoming %}{% endblock %}">
+      <a href="" class="sidebar-link
+      {% if todolist_items_overdue%}alert alert-danger{% endif %}">
         <i class="bi bi-calendar3"></i> {% trans 'Passed term' %}
-        <span class="sidebar-badge">{{ todo_counts.upcoming|default:'0' }}</span>
+        <span class="sidebar-badge">{{ todolist_items_overdue|default:'0' }}</span>
       </a>
-      <a href="" class="sidebar-link {% block sb_done %}{% endblock %}">
+      <a href="" class="sidebar-link }">
         <i class="bi bi-check-circle"></i> {% trans 'Done tasks' %}
-        <span class="sidebar-badge">{{ todo_counts.done|default:'0' }}</span>
+        <span class="sidebar-badge">{{ todolist_items_completed|default:'0' }}</span>
       </a>
 
 

@@ -5,22 +5,48 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .forms import CustomUserChangeForm, CustomUserCreateForm, TodolistItemCreateForm, TodolistCreateUpdateForm, TodolistItemCreateUpdateForm
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.db.models import Q
+
+
+def get_user_stats(user):
+    """Grąžina vartotojo užduočių statistiką"""
+    if not user.is_authenticated:
+        return {}
+
+    return {
+        'todolist_items_count': TodolistItem.objects.filter(todolist__owner=user).count(),
+        'todolist_items_completed': TodolistItem.objects.filter(todolist__owner=user, completed=True).count(),
+        'todolist_items_not_completed': TodolistItem.objects.filter(todolist__owner=user, completed=False).count(),
+        'todolists_overdue': Todolist.objects.filter(
+            owner=user,
+            deadline__lt=timezone.now().date(),
+            completed=False
+        ).count(),
+        'todolist_items_overdue': TodolistItem.objects.filter(
+            todolist__owner=user,
+            todolist__deadline__lt=timezone.now().date(),
+            completed=False
+        ).count(),
+    }
 
 
 def index(request):
-    todolists = Todolist.objects.filter(owner=request.user) # visi sarasai, kuriuos sukure vartotojas
-    todolists_counts = Todolist.objects.all().count() # kiek is viso sarasu
-    todolist_items = TodolistItem.objects.all() # kiek viso uzduočių visuose sarauose
+    todolists = Todolist.objects.filter(owner=request.user)
+    todolists_counts = Todolist.objects.all().count()
+    todolist_items = TodolistItem.objects.all()
     num_visits = request.session.get('num_visits', 1)
     request.session['num_visits'] = num_visits + 1
 
     context = {
         'num_visits': num_visits,
-        'todolists':  todolists,
+        'todolists': todolists,
         'todolists_counts': todolists_counts,
         'todolist_items': todolist_items,
-
     }
+
+    # Pridedame vartotojo statistiką
+    context.update(get_user_stats(request.user))
 
     return render(request, template_name="dashboard.html", context=context)
 
@@ -33,6 +59,7 @@ class TodolistDetailView(LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = TodolistItemCreateForm
+        context.update(get_user_stats(self.request.user))
         return context
 
     def get_queryset(self):
@@ -43,8 +70,6 @@ class TodolistCreateView(LoginRequiredMixin, generic.CreateView):
     model = Todolist
     template_name = 'todolist_create.html'
     form_class = TodolistCreateUpdateForm
-    #fields = ['title', 'description', 'deadline']
-    # success_url = reverse_lazy('todolist/<int:pk>')
 
     def get_success_url(self):
         return reverse("todolist", kwargs={"pk": self.object.id})
@@ -54,12 +79,22 @@ class TodolistCreateView(LoginRequiredMixin, generic.CreateView):
         form.save()
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(get_user_stats(self.request.user))
+        return context
+
 
 
 class TodolistDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Todolist
     template_name = 'todolist_delete.html'
     success_url = reverse_lazy('index')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(get_user_stats(self.request.user))
+        return context
 
 
 
@@ -70,6 +105,11 @@ class TodolistUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def get_success_url(self):
         return reverse("todolist", kwargs={"pk": self.object.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(get_user_stats(self.request.user))
+        return context
 
 
 def TodolistItemCreateView(request, todolist_pk):
@@ -82,7 +122,10 @@ def TodolistItemCreateView(request, todolist_pk):
             return redirect('todolist', pk=todolist_pk)
     else:
         form = TodolistItemCreateUpdateForm()
-    return render(request, 'todolist.html', {'form': form})
+
+    context = {'form': form}
+    context.update(get_user_stats(request.user))
+    return render(request, 'todolist.html', context)
 
 
 @login_required
@@ -104,7 +147,13 @@ def TodolistItemEditView(request, todolist_pk, item_pk):
     else:
         form = TodolistItemCreateUpdateForm(instance=item)
 
-    return render(request, 'todolist_item_edit.html', {'form': form, 'todolist': item.todolist, 'item': item})
+    context = {
+        'form': form,
+        'todolist': item.todolist,
+        'item': item
+    }
+    context.update(get_user_stats(request.user))
+    return render(request, 'todolist_item_edit.html', context)
 
 
 @login_required
@@ -134,6 +183,11 @@ class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(get_user_stats(self.request.user))
+        return context
 
 
 class SignUpView(generic.CreateView):

@@ -112,7 +112,7 @@ a:hover { color: var(--accent-dim); }
   font-size: .7rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--text-muted);
+
   padding: 0 .5rem;
   margin: 1.25rem 0 .5rem;
 }
@@ -140,7 +140,7 @@ a:hover { color: var(--accent-dim); }
   padding: .15rem .5rem;
   border-radius: 20px;
   background: var(--surface-3);
-  color: var(--text-muted);
+  color: #bab9b9;
 }
 
 .sidebar-link.active .sidebar-badge {
@@ -175,7 +175,10 @@ a:hover { color: var(--accent-dim); }
   border-bottom: 1px solid var(--border);
   padding: 1.1rem 1.4rem;
 }
-
+.list-date.danger
+{
+  color: var(--danger-soft);
+}
 
 /* ═══════════════════════════════════════════════════════════════
    6. MYGTUKAI (Buttons)

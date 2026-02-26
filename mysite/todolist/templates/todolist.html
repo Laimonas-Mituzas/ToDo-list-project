@@ -36,7 +36,8 @@
 
          <!-- Deadline-->
         <div class="mb-3" id="deadline-container">
-            <p class="alert {% if todolist.is_overpassed %}alert-danger{% endif %}"> Atlikti iki {{ todolist.deadline|date:"Y-m-d" }}
+            <p class="alert {% if todolist.is_overpassed %}alert-danger{% endif %}">
+              {% if todolist.is_overpassed %} {% trans 'Passed term'%} {% else %}{% trans 'Due'%} {% endif %} {{ todolist.deadline|date:"Y-m-d" }}
           </p>
         </div>
 
