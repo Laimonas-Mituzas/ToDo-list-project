@@ -3,7 +3,7 @@ from django.views import generic
 from .models import Todolist, TodolistItem
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from .forms import UserChangeForm, CustomUserCreateForm, TodolistItemCreateForm, TodolistCreateUpdateForm, TodolistItemCreateUpdateForm
+from .forms import CustomUserChangeForm, CustomUserCreateForm, TodolistItemCreateForm, TodolistCreateUpdateForm, TodolistItemCreateUpdateForm
 from django.contrib.auth.decorators import login_required
 
 
@@ -107,21 +107,6 @@ def TodolistItemEditView(request, todolist_pk, item_pk):
     return render(request, 'todolist_item_edit.html', {'form': form, 'todolist': item.todolist, 'item': item})
 
 
-class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
-    form_class = UserChangeForm
-    template_name = "profile.html"
-    success_url = reverse_lazy('profile')
-
-    def get_object(self, queryset=None):
-        return self.request.user
-
-
-class SignUpView(generic.CreateView):
-    form_class = CustomUserCreateForm
-    template_name = "signup.html"
-    success_url = reverse_lazy("login")
-
-
 @login_required
 def TodolistItemDeleteView(request, todolist_pk, item_pk):
     """Delete a TodolistItem (POST only). Redirects back to the todolist detail."""
@@ -140,3 +125,23 @@ def TodolistItemDeleteView(request, todolist_pk, item_pk):
 
     # If not POST, redirect back (safety)
     return redirect('todolist', pk=todolist_pk)
+
+
+class ProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
+    form_class = CustomUserChangeForm
+    template_name = "profile.html"
+    success_url = reverse_lazy('profile')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+class SignUpView(generic.CreateView):
+    form_class = CustomUserCreateForm
+    template_name = "signup.html"
+    success_url = reverse_lazy("login")
+
+# class RegisterView(generic.CreateView):
+#     form_class = CustomUserCreateForm
+#     template_name = "signup.html"
+#     success_url = reverse_lazy("login")

@@ -37,7 +37,8 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'profile' %}">
-                <img src="{{ user.avatar_url|default:'/static/img/avatar-placeholder.png' }}"
+                <img src="{%if user.avatar %}{{user.avatar.url}}{% else %}/static/img/avatar-placeholder.png{% endif %}"
+
                      class="rounded-circle me-1"
                      width="22" height="22" alt="Avatar" />
                 {{ user.get_username }}
@@ -73,10 +74,10 @@
             </li>
           {% else %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'login'%}">{% trans 'Log in' %}</a>
+              <a class="nav-link" href="{% url 'login' %}">{% trans 'Log in' %}</a>
             </li>
             <li class="nav-item">
-              <a class="btn btn-accent btn-sm px-3" href="">{% trans 'Register' %}</a>
+              <a class="btn btn-accent btn-sm px-3" href="{% url 'signup' %}">{% trans 'Register' %}</a>
             </li>
           {% endif %}
         </ul>

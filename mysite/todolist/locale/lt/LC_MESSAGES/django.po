@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 11:11+0200\n"
-"PO-Revision-Date: 2026-02-25 11:09+0200\n"
+"POT-Creation-Date: 2026-02-26 08:53+0200\n"
+"PO-Revision-Date: 2026-02-26 08:54+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: lt\n"
@@ -20,45 +20,91 @@ msgstr ""
 "n%10>=2 && n%10<=9 && (n%100<11 || n%100>19) ? 1 : 2);\n"
 "X-Generator: Poedit 3.8\n"
 
-#: .\models.py:12
+#: .\models.py:26
 msgid "Title"
 msgstr "Pavadinimas"
 
-#: .\models.py:16
-msgid "Owner"
-msgstr "Savininkas"
+#: .\models.py:27
+msgid "Description"
+msgstr "Aprašas"
 
-#: .\models.py:19
-msgid "Created"
-msgstr "Sukurta"
-
-#: .\models.py:20
-msgid "Deadline"
-msgstr "Terminas"
-
-#: .\models.py:23
-msgid "ToDo list"
-msgstr "Sąrašas"
-
-#: .\models.py:24
-msgid "ToDo lists"
-msgstr "Sąrašai"
-
-#: .\models.py:42 .\templates\todolist.html:3
-msgid "Task"
-msgstr "Užduotis"
-
-#: .\models.py:43
+#: .\models.py:28 .\models.py:57
 msgid "Completed"
 msgstr "Atlikta"
 
-#: .\models.py:46
+#: .\models.py:30
+msgid "Owner"
+msgstr "Savininkas"
+
+#: .\models.py:33 .\templates\todolist.html:129
+msgid "Created"
+msgstr "Sukurta"
+
+#: .\models.py:34
+msgid "Deadline"
+msgstr "Terminas"
+
+#: .\models.py:37
+msgid "ToDo list"
+msgstr "Sąrašas"
+
+#: .\models.py:38
+msgid "ToDo lists"
+msgstr "Sąrašai"
+
+#: .\models.py:55
+#, fuzzy
+#| msgid "ToDo list"
+msgid "Todo list"
+msgstr "Sąrašas"
+
+#: .\models.py:56 .\templates\todolist.html:3
+msgid "Task"
+msgstr "Užduotis"
+
+#: .\models.py:60
 msgid "ToDo item"
 msgstr "Užduotis"
 
-#: .\models.py:47
+#: .\models.py:61
 msgid "ToDo items"
 msgstr "Užduotys"
+
+#: .\templates\base.html:35
+msgid "Dashboard"
+msgstr "Skydelis"
+
+#: .\templates\base.html:70
+msgid "Log out"
+msgstr "Atsijungti"
+
+#: .\templates\base.html:76
+msgid "Log in"
+msgstr "Prisijungti"
+
+#: .\templates\base.html:79
+msgid "Register"
+msgstr "Registruotis"
+
+#: .\templates\base.html:93
+msgid "Status"
+msgstr "Būsena"
+
+#: .\templates\base.html:95
+msgid "All tasks"
+msgstr "Visos užduotys"
+
+#: .\templates\base.html:99
+msgid "Waiting"
+msgstr "Laukia"
+
+#: .\templates\base.html:103
+msgid "Passed term"
+msgstr "Pražioplinta"
+
+#: .\templates\base.html:107
+msgid "Done tasks"
+msgstr "Atliktos užduotys"
 
 #: .\templates\dashboard.html:18
 msgid "Hello,"
@@ -74,7 +120,7 @@ msgstr "Viso užduočių:"
 
 #: .\templates\dashboard.html:43
 msgid "done"
-msgstr ""
+msgstr "atlikta"
 
 #: .\templates\dashboard.html:55
 msgid "Due"
@@ -83,3 +129,52 @@ msgstr "Atlikti iki"
 #: .\templates\dashboard.html:75
 msgid "Login"
 msgstr "Prisijungti"
+
+#: .\templates\profile.html:11
+msgid "Username:"
+msgstr "Naudotoja vardas:"
+
+#: .\templates\profile.html:12
+msgid "First name:"
+msgstr "Vardas:"
+
+#: .\templates\profile.html:13
+msgid "Last name:"
+msgstr "Pavardė:"
+
+#: .\templates\profile.html:14
+msgid "Email:"
+msgstr "E-paštas:"
+
+#: .\templates\profile.html:15
+msgid "Profile"
+msgstr "Profilis"
+
+#: .\templates\todolist.html:125
+msgid "Back to dash"
+msgstr "Į skydelį"
+
+#: .\templates\todolist.html:144 .\templates\todolist_item_edit.html:31
+msgid "Save"
+msgstr "Išsaugoti"
+
+#: .\templates\todolist.html:146
+msgid "Edit"
+msgstr "Keisti"
+
+#: .\templates\todolist.html:148
+msgid "Cancel"
+msgstr "Atšaukti"
+
+#: .\templates\todolist.html:151 .\templates\todolist.html:172
+#: .\templates\todolist_item_edit-back.html:38
+msgid "Delete"
+msgstr "Pašalinti"
+
+#: .\templates\todolist_item_edit.html:34
+msgid "Back"
+msgstr "Atgal"
+
+#: .\templates\todolist_item_edit.html:47
+msgid "Delete task"
+msgstr "Trinti užduotį"

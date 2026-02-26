@@ -3,15 +3,15 @@ from .models import CustomUser, Todolist, TodolistItem
 from django.contrib.auth.forms import UserCreationForm
 
 
-class UserChangeForm(forms.ModelForm):
+class CustomUserChangeForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['first_name', 'last_name', 'email', 'avatar']
 
 class CustomUserCreateForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'password1', 'password2']
 
 
 class TodolistCreateUpdateForm(forms.ModelForm):
@@ -35,3 +35,4 @@ class TodolistItemUpdateForm(forms.ModelForm):
     class Meta:
         model = TodolistItem
         fields = ['title', 'completed']
+

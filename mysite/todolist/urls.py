@@ -12,6 +12,6 @@ urlpatterns = [
     path('todolist/<int:todolist_pk>/item/<int:item_pk>/update', views.TodolistItemEditView, name='todolist_item_edit'),
     path('todolist/<int:todolist_pk>/item/<int:item_pk>/delete', views.TodolistItemDeleteView, name='todolist_item_delete'),
     path('profile/', views.ProfileUpdateView.as_view(), name='profile'),
-
+    path('signup/', views.SignUpView.as_view(), name='signup'),
  ]
 
